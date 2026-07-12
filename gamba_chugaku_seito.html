@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0060)file:///C:/Users/yn/Downloads/gamba_chugaku_seito%20(6).html -->
+<html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GAMBAシステム 中学生デモ｜江原予備校</title>
 <style>
@@ -15,6 +15,57 @@
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body { font-family:'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+
+  /* ===== パスワード保護オーバーレイ ===== */
+  #pw-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: var(--navy);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+  }
+  #pw-box {
+    background: white; border-radius: 16px; padding: 40px 32px;
+    text-align: center; width: 90%; max-width: 380px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  }
+  #pw-logo {
+    font-size: 2rem; font-weight: 700; letter-spacing: 0.2em;
+    color: var(--navy); margin-bottom: 4px;
+  }
+  #pw-subtitle {
+    font-size: 0.78rem; color: var(--muted); margin-bottom: 24px; letter-spacing: 0.1em;
+  }
+  .pw-label {
+    font-size: 0.78rem; font-weight: 700; color: var(--navy);
+    margin-bottom: 6px; display: block; text-align: left;
+  }
+  .pw-input {
+    width: 100%; padding: 12px 16px; border: 2px solid #ddd; border-radius: 8px;
+    font-size: 1rem; font-family: inherit; outline: none; text-align: left;
+    letter-spacing: 0.05em; transition: border-color 0.2s;
+    margin-bottom: 12px;
+  }
+  .pw-input:focus { border-color: var(--navy); }
+  .pw-input.error { border-color: #e53e3e; animation: shake 0.3s ease; }
+  @keyframes shake {
+    0%,100%{ transform:translateX(0); }
+    25%{ transform:translateX(-6px); }
+    75%{ transform:translateX(6px); }
+  }
+  #pw-btn {
+    width: 100%; padding: 12px; background: var(--orange); color: white;
+    border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 700;
+    font-family: inherit; cursor: pointer; letter-spacing: 0.08em;
+    transition: opacity 0.2s;
+  }
+  #pw-btn:hover { opacity: 0.85; }
+  #pw-error {
+    color: #e53e3e; font-size: 0.78rem; margin-top: 10px;
+    display: none; font-weight: 700;
+  }
+  #pw-badge {
+    width: 56px; height: 56px; margin: 0 auto 16px;
+  }
 
   /* ===== ヒーロー ===== */
   .hero { background: var(--navy); color: white; padding: 48px 24px 40px; text-align: center; }
@@ -106,18 +157,39 @@
   .cta-btn:hover { opacity: 0.85; }
 
   footer { text-align: center; padding: 24px; font-size: 0.72rem; color: var(--muted); border-top: 1px solid #e0e0e0; margin-top: 40px; }
-
-
 </style>
 </head>
 <body>
+
+<!-- ===== パスワード保護オーバーレイ ===== -->
+<div id="pw-overlay" style="display: none;">
+  <div id="pw-box">
+    <svg id="pw-badge" viewBox="0 0 56 56">
+      <polygon points="28,4 50,16 50,40 28,52 6,40 6,16" fill="#1a3a6b"></polygon>
+      <text x="28" y="35" text-anchor="middle" font-family="&#39;Noto Sans JP&#39;,sans-serif" font-size="22" font-weight="700" fill="white">G</text>
+    </svg>
+    <div id="pw-logo">GAMBA</div>
+    <div id="pw-subtitle">江原予備校　中学生システム</div>
+    <label class="pw-label" for="id-input">🎓 生徒ID</label>
+    <input id="id-input" class="pw-input" type="text" placeholder="例）CHU1-2026-001" autocomplete="off">
+    <label class="pw-label" for="pw-input">🔒 パスワード</label>
+    <input id="pw-input" class="pw-input" type="password" placeholder="パスワード" autocomplete="off">
+    <button id="pw-btn" onclick="checkPassword()">ログイン</button>
+    <div id="pw-error">IDまたはパスワードが違います。もう一度お試しください。</div>
+  </div>
+</div>
+
+<!-- ===== ウェルカムバナー（ログイン後表示） ===== -->
+<div id="welcome-bar" style="display:none; background:var(--gold); color:#1a3a6b; text-align:center; padding:10px 16px; font-size:0.88rem; font-weight:700; letter-spacing:0.05em;">
+  👋 <span id="welcome-name"></span>さん、こんにちは！今日もいっしょにがんばろう🌟
+</div>
 
 <!-- ===== ヒーロー ===== -->
 <div class="hero">
   <div class="logo-wrap">
     <svg class="logo-badge" viewBox="0 0 48 48">
-      <polygon points="24,3 42,13 42,35 24,45 6,35 6,13" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
-      <text x="24" y="30" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="18" font-weight="700" fill="white">G</text>
+      <polygon points="24,3 42,13 42,35 24,45 6,35 6,13" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.5)" stroke-width="1"></polygon>
+      <text x="24" y="30" text-anchor="middle" font-family="&#39;Noto Sans JP&#39;,sans-serif" font-size="18" font-weight="700" fill="white">G</text>
     </svg>
     <span class="logo-name">GAMBA</span>
   </div>
@@ -131,7 +203,6 @@
   </div>
 </div>
 
-<div class="about-band">▶ 以下のコンテンツは無料でお試しいただけます</div>
 
 <div class="container">
 
@@ -163,7 +234,7 @@
   </div>
 
   <!-- ===== 科目カード ===== -->
-  <div class="section-title">体験できるGAMBAコンテンツ（中学生対応）</div>
+  <div class="section-title">学習コンテンツ一覧</div>
   <div class="cards-grid">
 
     <!-- 中学英単語 -->
@@ -397,7 +468,7 @@
         </div>
       </div>
       <div class="card-desc">実際の教科書の図・地図・写真をそのまま画面に表示。図を見ながら語群をタップして空欄を埋める、GAMBA独自の地図問題ドリルです。熊本市採択の帝国書院「中学生の地理」に完全対応。</div>
-      <div class="card-units" style="--tag-bg:#dbeafe;--tag-col:#1d4ed8;">
+      <div class="card-units">
         <span class="unit-tag" style="background:#dbeafe;color:#1d4ed8;">世界の地図・位置</span>
         <span class="unit-tag" style="background:#dbeafe;color:#1d4ed8;">日本の領域・領土問題</span>
         <span class="unit-tag" style="background:#dbeafe;color:#1d4ed8;">7地方区分・山脈・河川</span>
@@ -429,20 +500,99 @@
     </div>
   </div>
 
-  <!-- ===== メインCTA ===== -->
-  <div class="cta-section">
-    <div class="cta-title">まずは無料体験指導へ</div>
-    <div class="cta-text">
-      GAMBAシステムを実際に体験しながら、<br>
-      お子様に合った学習プランをご提案します。<br>
-      お気軽にお問い合わせください。
-    </div>
-    <a class="cta-btn" href="tel:0963826761">📞 お電話でのお問い合わせ　096-382-6761</a>
-  </div>
 
 </div>
 
 <footer>
   © 江原予備校 / 株式会社 アイラコーポレーション<br>
   〒862-0950　熊本市中央区水前寺3丁目1-3<br>
-  TEL：096-382-6761　｜　Mail：<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3a51555d5f547a59555b494e1455595414545f14504a">[email&#160
+  TEL：096-382-6761
+</footer>
+
+<!-- ===== パスワード保護スクリプト ===== -->
+<script>
+  // ============================================================
+  // 【生徒リスト】生徒が増えたらここに追加してください
+  // 形式: '生徒ID': '名前'
+  // ============================================================
+  var STUDENTS = {
+    'CHU1-2026-001': '田中',
+    'CHU1-2026-002': '鈴木',
+    'CHU1-2026-003': '佐藤',
+    'CHU1-2026-004': '山田',
+    'CHU1-2026-005': '中村',
+    'CHU1-2026-006': '伊藤',
+    'CHU1-2026-007': '渡辺',
+    'CHU1-2026-008': '加藤'
+    // ↑ ここに追加: ,'CHU1-2026-009': '〇〇' のように
+  };
+  // ============================================================
+
+  var PASSWORD = 'gamba2026';
+
+  (function() {
+    var auth = localStorage.getItem('gamba_auth');
+    var name = localStorage.getItem('gamba_name');
+    if (auth === 'ok') {
+      document.getElementById('pw-overlay').style.display = 'none';
+      showWelcome(name);
+    }
+
+    // Enterキー対応
+    document.getElementById('pw-input').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') checkPassword();
+    });
+    document.getElementById('id-input').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') document.getElementById('pw-input').focus();
+    });
+  })();
+
+  function showWelcome(name) {
+    if (!name) return;
+    var bar = document.getElementById('welcome-bar');
+    var nameEl = document.getElementById('welcome-name');
+    nameEl.textContent = name;
+    bar.style.display = 'block';
+  }
+
+  function checkPassword() {
+    var idInput = document.getElementById('id-input');
+    var pwInput = document.getElementById('pw-input');
+    var error = document.getElementById('pw-error');
+    var overlay = document.getElementById('pw-overlay');
+
+    var studentId = idInput.value.trim().toUpperCase();
+    var password = pwInput.value;
+
+    // IDの検索（大文字小文字を無視）
+    var matchedId = Object.keys(STUDENTS).find(function(k) {
+      return k.toUpperCase() === studentId;
+    });
+
+    if (matchedId && password === PASSWORD) {
+      var name = STUDENTS[matchedId];
+      localStorage.setItem('gamba_auth', 'ok');
+      localStorage.setItem('gamba_name', name);
+      showWelcome(name);
+      overlay.style.transition = 'opacity 0.4s ease';
+      overlay.style.opacity = '0';
+      setTimeout(function() { overlay.style.display = 'none'; }, 400);
+    } else {
+      // エラーアニメーション
+      [idInput, pwInput].forEach(function(el) {
+        el.classList.remove('error');
+      });
+      void idInput.offsetWidth;
+      [idInput, pwInput].forEach(function(el) {
+        el.classList.add('error');
+      });
+      error.style.display = 'block';
+      pwInput.value = '';
+      pwInput.focus();
+    }
+  }
+</script>
+
+
+
+</body></html>

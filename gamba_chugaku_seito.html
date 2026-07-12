@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAMBAシステム 中学生デモ｜江原予備校</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@700&display=swap');
+  :root {
+    --navy: #1a3a6b; --navy-light: #eef2f8;
+    --orange: #e8650a; --orange-light: #fff4ec;
+    --gold: #f7b733; --text: #2c2c2c; --muted: #777;
+    --bg: #f5f3ef; --white: #ffffff; --radius: 12px;
+    --pink: #e91e8c; --pink-light: #fdf0f8;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+
+  /* ===== ヒーロー ===== */
+  .hero { background: var(--navy); color: white; padding: 48px 24px 40px; text-align: center; }
+  .logo-wrap { display: inline-flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .logo-badge { width: 48px; height: 48px; }
+  .logo-name { font-size: 2rem; font-weight: 700; letter-spacing: 0.2em; color: white; }
+  .hero-sub { font-size: 0.85rem; color: rgba(255,255,255,0.7); letter-spacing: 0.15em; margin-bottom: 8px; }
+  .hero-tag { display: inline-block; background: var(--gold); color: #1a3a6b; font-size: 0.75rem; font-weight: 700; padding: 3px 14px; border-radius: 20px; margin-bottom: 16px; letter-spacing: 0.08em; }
+  .hero-catch { font-family: 'Noto Serif JP', serif; font-size: 1.4rem; font-weight: 700; color: var(--gold); margin-bottom: 10px; line-height: 1.6; }
+  .hero-desc { font-size: 0.82rem; color: rgba(255,255,255,0.82); max-width: 500px; margin: 0 auto; line-height: 1.9; }
+
+  .about-band { background: var(--orange); color: white; padding: 13px 24px; text-align: center; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.08em; }
+
+  .container { max-width: 860px; margin: 0 auto; padding: 40px 20px 60px; }
+
+  .section-title { font-family: 'Noto Serif JP', serif; font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 24px; padding-left: 14px; border-left: 4px solid var(--orange); }
+
+  /* ===== 科目カード ===== */
+  .cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 48px; }
+  @media(max-width:600px){ .cards-grid { grid-template-columns: 1fr; } }
+
+  .subject-card { background: var(--white); border-radius: var(--radius); overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.07); transition: transform 0.2s, box-shadow 0.2s; text-decoration: none; color: inherit; display: block; }
+  .subject-card:hover { transform: translateY(-3px); box-shadow: 0 6px 24px rgba(0,0,0,0.12); }
+
+  .card-top { padding: 20px 20px 12px; display: flex; align-items: flex-start; gap: 14px; }
+  .card-emoji { font-size: 2rem; flex-shrink: 0; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 10px; }
+  .card-category { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; padding: 2px 8px; border-radius: 20px; display: inline-block; margin-bottom: 6px; }
+  .card-name { font-size: 1rem; font-weight: 700; color: var(--text); line-height: 1.3; }
+  .card-level { font-size: 0.7rem; color: var(--muted); margin-top: 3px; }
+  .card-desc { padding: 12px 20px 14px; font-size: 0.76rem; color: var(--muted); line-height: 1.7; border-top: 1px solid #f0f0f0; }
+  .card-units { padding: 8px 20px 12px; display: flex; flex-wrap: wrap; gap: 5px; border-top: 1px solid #f0f0f0; }
+  .unit-tag { font-size: 0.65rem; padding: 2px 9px; border-radius: 10px; font-weight: 500; }
+  .card-footer-link { padding: 10px 20px; font-size: 0.72rem; font-weight: 700; display: flex; align-items: center; justify-content: space-between; }
+
+  /* 英語：青 */
+  .s1 .card-emoji { background: #e8f4fd; }
+  .s1 .card-category { background: #1a6b9a; color: white; }
+  .s1 .unit-tag { background: #e8f4fd; color: #1a6b9a; }
+  .s1 .card-footer-link { background: #e8f4fd; color: #1a6b9a; }
+
+  /* 数学：オレンジ */
+  .s2 .card-emoji { background: var(--orange-light); }
+  .s2 .card-category { background: var(--orange); color: white; }
+  .s2 .unit-tag { background: var(--orange-light); color: var(--orange); }
+  .s2 .card-footer-link { background: var(--orange-light); color: var(--orange); }
+
+  /* 国語：ピンク */
+  .s3 .card-emoji { background: var(--pink-light); }
+  .s3 .card-category { background: var(--pink); color: white; }
+  .s3 .unit-tag { background: var(--pink-light); color: var(--pink); }
+  .s3 .card-footer-link { background: var(--pink-light); color: var(--pink); }
+
+  /* 理科：緑 */
+  .s4 .card-emoji { background: #eaf5f0; }
+  .s4 .card-category { background: #2e7d5e; color: white; }
+  .s4 .unit-tag { background: #eaf5f0; color: #2e7d5e; }
+  .s4 .card-footer-link { background: #eaf5f0; color: #2e7d5e; }
+
+  /* 社会：紫 */
+  .s5 .card-emoji { background: #f0ebff; }
+  .s5 .card-category { background: #5b3fa6; color: white; }
+  .s5 .unit-tag { background: #f0ebff; color: #5b3fa6; }
+  .s5 .card-footer-link { background: #f0ebff; color: #5b3fa6; }
+
+  /* ===== フロー ===== */
+  .flow-wrap { background: var(--white); border-radius: var(--radius); padding: 28px 24px; margin-bottom: 48px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+  .flow-steps { display: flex; align-items: stretch; gap: 0; flex-wrap: wrap; justify-content: center; }
+  .flow-step { flex: 1; min-width: 160px; max-width: 220px; background: var(--navy-light); border-radius: 10px; padding: 20px 14px; text-align: center; position: relative; }
+  .flow-num { display: inline-block; background: var(--navy); color: white; font-size: 0.7rem; font-weight: 700; width: 24px; height: 24px; border-radius: 50%; line-height: 24px; margin-bottom: 8px; }
+  .flow-step-icon { font-size: 1.6rem; margin-bottom: 6px; }
+  .flow-step-title { font-size: 0.85rem; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .flow-step-text { font-size: 0.7rem; color: var(--muted); line-height: 1.6; }
+  .flow-arrow { display: flex; align-items: center; padding: 0 8px; color: var(--orange); font-size: 1.4rem; font-weight: 700; align-self: center; }
+  @media(max-width:600px){ .flow-arrow { display: none; } .flow-step { min-width: 100%; max-width: 100%; } }
+
+  /* ===== 特長 ===== */
+  .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 48px; }
+  @media(max-width:600px){ .features-grid { grid-template-columns: 1fr; } }
+  .feature-item { background: var(--white); border-radius: var(--radius); padding: 20px 16px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+  .feature-icon { font-size: 1.8rem; margin-bottom: 10px; }
+  .feature-title { font-size: 0.82rem; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+  .feature-text { font-size: 0.72rem; color: var(--muted); line-height: 1.7; }
+
+  /* ===== メインCTA ===== */
+  .cta-section { background: var(--navy); border-radius: var(--radius); padding: 32px 24px; text-align: center; color: white; }
+  .cta-title { font-family: 'Noto Serif JP', serif; font-size: 1.1rem; color: var(--gold); margin-bottom: 10px; }
+  .cta-text { font-size: 0.8rem; color: rgba(255,255,255,0.8); margin-bottom: 20px; line-height: 1.8; }
+  .cta-btn { display: inline-block; background: var(--orange); color: white; font-weight: 700; font-size: 0.9rem; padding: 12px 32px; border-radius: 30px; text-decoration: none; letter-spacing: 0.08em; transition: opacity 0.2s; }
+  .cta-btn:hover { opacity: 0.85; }
+
+  footer { text-align: center; padding: 24px; font-size: 0.72rem; color: var(--muted); border-top: 1px solid #e0e0e0; margin-top: 40px; }
+
+
+</style>
+</head>
+<body>
+
+<!-- ===== ヒーロー ===== -->
+<div class="hero">
+  <div class="logo-wrap">
+    <svg class="logo-badge" viewBox="0 0 48 48">
+      <polygon points="24,3 42,13 42,35 24,45 6,35 6,13" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+      <text x="24" y="30" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="18" font-weight="700" fill="white">G</text>
+    </svg>
+    <span class="logo-name">GAMBA</span>
+  </div>
+  <div class="hero-sub">江原予備校　独自学習システム</div>
+  <div class="hero-tag">中学生版</div>
+  <div class="hero-catch">わかった！が続く。<br>基礎から入試まで、自分のペースで。</div>
+  <div class="hero-desc">
+    中学全科目（英語・数学・国語・理科・社会）に対応。<br>
+    暗記カード方式で知識を定着させ、<br>
+    演習問題で実力をしっかり確認できます。
+  </div>
+</div>
+
+<div class="about-band">▶ 以下のコンテンツは無料でお試しいただけます</div>
+
+<div class="container">
+
+  <!-- ===== 学習の流れ ===== -->
+  <div class="section-title">GAMBAシステムで学ぶ 3ステップ</div>
+  <div class="flow-wrap">
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <div class="flow-step-icon">👨‍🏫</div>
+        <div class="flow-step-title">個別指導</div>
+        <div class="flow-step-text">講師が弱点を見つけてわかりやすく解説。「なぜ？」から丁寧に教えます。</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="background:#fff4ec;">
+        <div class="flow-num" style="background:var(--orange);">2</div>
+        <div class="flow-step-icon">📱</div>
+        <div class="flow-step-title">GAMBAシステム</div>
+        <div class="flow-step-text">暗記カード方式で繰り返し学習。スキマ時間も活用して効率よく定着。</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="background:#eaf5f0;">
+        <div class="flow-num" style="background:#2e7d5e;">3</div>
+        <div class="flow-step-icon">✏️</div>
+        <div class="flow-step-title">演習問題</div>
+        <div class="flow-step-text">実際のテスト形式で演習。解説付きで「できる」まで徹底サポート。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 科目カード ===== -->
+  <div class="section-title">体験できるGAMBAコンテンツ（中学生対応）</div>
+  <div class="cards-grid">
+
+    <!-- 中学英単語 -->
+    <a class="subject-card s2" href="https://realizefield.github.io/j-engglish-word/" target="_blank">
+      <div class="card-top">
+        <div class="card-emoji">🔤</div>
+        <div class="card-info">
+          <div class="card-category">英語</div>
+          <div class="card-name">中学英単語</div>
+          <div class="card-level">⭐　基礎レベル</div>
+        </div>
+      </div>
+      <div class="card-desc">中学で必須の英単語をGAMBAシステムで効率よくマスター。暗記カード方式で定着率アップ。</div>
+      <div class="card-footer-link">デモを見る <span>→</span></div>
+    </a>
+
+    <!-- 中学歴史 -->
+    <a class="subject-card s4" href="https://realizefield.github.io/j-rekishi/" target="_blank">
+      <div class="card-top">
+        <div class="card-emoji">📚</div>
+        <div class="card-info">
+          <div class="card-category">歴史</div>
+          <div class="card-name">中学歴史</div>
+          <div class="card-level">⭐　基礎レベル</div>
+        </div>
+      </div>
+      <div class="card-desc">基礎から歴史が学べます。最短の時間でたくさん覚えられ、何度もくり返し練習できる暗記システムで定着させます。</div>
+      <div class="card-footer-link">デモを見る <span>→</span></div>
+    </a>
+
+    <!-- 高校入試頻出漢字 -->
+    <a class="subject-card s3" href="https://realizefield.github.io/j-kanji/kounin-kanji-index.html" target="_blank">
+      <div class="card-top">
+        <div class="card-emoji">✍️</div>
+        <div class="card-info">
+          <div class="card-category">国語</div>
+          <div class="card-name">高校入試頻出漢字</div>
+          <div class="card-level">⭐　入試対策レベル</div>
+        </div>
+      </div>
+      <div class="card-desc">高校入試で頻出する漢字を厳選収録。読み・書き両面から効率よく対策でき、入試直前の総仕上げにも最適です。</div>
+      <div class="card-footer-link">デモを見る <span>→</span></div>
+    </a>
+
+    <!-- 英語 -->
+    <a class="subject-card s1" href="https://realizefield.github.io/j-english/" target="_blank">
+      <div class="card-top">
+        <div class="card-emoji">📝</div>
+        <div class="card-info">
+          <div class="card-category">英語</div>
+          <div class="card-name">英文法・英単語熟語</div>
+          <div class="card-level">⭐ 中1〜中3対応</div>
+        </div>
+      </div>
+      <div class="card-desc">定期テスト・入試頻出の英文法英単語・英熟語をカード方式で効率よく暗記。リスニング対策にも対応。</div>
+      <div class="card-units">
+        <span class="unit-tag">中1英文法・英単語</span>
+        <span class="unit-tag">中2英文法・英単語</span>
+        <span class="unit-tag">中3英文法・英単語</span>
+        <span class="unit-tag">重要英熟語</span>
+      </div>
+      <div class="card-footer-link">デモを見る <span>→</span></div>
+    </a>
+
+    <!-- 数学：文章題 -->
+    <a class="subject-card s2" href="https://realizefield.github.io/j-math-bushodai1/bunshou_index.html" target="_blank">
+      <div class="card-top">
+        <div class="card-emoji">📝</div>
+        <div class="card-info">
+          <div class="card-category">数学</div>
+          <div class="card-name">文章題</div>
+          <div class="card-level">⭐ 中1〜中3対応</div>
+        </div>
+      </div>
+      <div class="card-desc">一次方程式・連立方程式・二次方程式の文章題を、段階的に解けるように丁寧に解説。式の立て方が身につきます。</div>
+      <div class="card-units">
+        <span class="unit-tag">一次方程式</span>
+        <span class="unit-tag">連立方程式</span>
+        <span class="unit-tag">食塩水・速さ</span>
+        <span class="unit-tag">二次方程式</span>
+      </div>
+      <div class="card-footer-link">デモを見る <span>→</span></div>
+    </a>
+
+    <!-- 数学：関数 -->
+    <a class="subject-card s2" href="https://realizefield.github.io/j-math-kansu/kansu_index.html" target="_blank">
+      <div class="card-top">
+        <div class="card-emoji">📊</div>
+        <div class="card-info">
+          <div class="card-category">数学</div>
+          <div class="card-name">関数</div>
+          <div class="card-level">⭐ 中1〜中3対応</div>
+        </div>
+      </div>
+      <div class="card-desc">正比例・反比例から一次関数・二次関数まで、グラフと式を関連付けて学習。視覚的に理解できます。</div>
+      <div class="card-units">
+        <span class="unit-tag">正比例・反比例</span>
+        <span class="unit-tag">一次関数</span>
+        <span class="unit-tag">二次関数</span>
+        <span class="unit-tag">グラフ</span>
+      </div>
+      <div class="card-footer-link">デモを見る <span>→</span></div>
+    </a>
+
+    <!-- 数学：計算 -->
+    <a class="subject-card s2" href="https://realizefield.github.io/j-math/gamba_chugaku.html" target="_blank">
+      <div class="card-top">
+        <div class="card-emoji">🧮</div>
+        <div class="card-info">
+          <div class="card-category">数学</div>
+          <div class="card-name">計算</div>
+          <div class="card-level">⭐ 中1〜中3対応</div>
+        </div>
+      </div>
+      <div class="card-desc">分数・小数・正負の数から方程式の計算まで、つまずきやすいポイントを丁寧に解説。計算力の土台を固めます。</div>
+      <div class="card-units">
+        <span class="unit-tag">正負の数</span>
+        <span class="unit-tag">文字式</span>
+        <span class="unit-tag">方程式の計算</span>
+        <span class="unit-tag">平方根</span>
+      </div>
+      <div class="card-footer-link">デモを見る <span>→</span></div>
+    </a>
+
+    <!-- 数学：文字式の証明 -->
+    <a class="subject-card s2" href="https://realizefield.github.io/j-math-mojiproof/MA_proof_index.html" target="_blank">
+      <div class="card-top">
+        <div class="card-emoji">✏️</div>
+        <div class="card-info">
+          <div class="card-category">数学</div>
+          <div class="card-name">文字式の証明</div>
+          <div class="card-level">⭐ 中2対応</div>
+        </div>
+      </div>
+      <div class="card-desc">文字式を使って「なぜそうなるか」を論理的に説明する力を養います。倍数・偶奇・連続整数・桁の証明まで段階的に学習。</div>
+      <div class="card-units">
+        <span class="unit-tag">倍数の証明</span>
+        <span class="unit-tag">偶数・奇数</span>
+        <span class="unit-tag">連続する整数</span>
+        <span class="unit-tag">桁・倍数判定</span>
+      </div>
+      <div class="card-footer-link">デモを見る <span>→</span></div>
+    </a>
+
+    <!-- 国語 -->
+    <a class="subject-card s3" href="https://realizefield.github.io/kokubunpo/" target="_blank">
+      <div class="card-top">
+        <div class="card-emoji">📖</div>
+        <div class="card-info">
+          <div class="card-category">国語</div>
+          <div class="card-name">漢字・文法・読解</div>
+          <div class="card-level">⭐ 中1〜中3対応</div>
+        </div>
+      </div>
+      <div class="card-desc">定期テスト頻出の漢字・語彙から文法・読解まで幅広く対応。高校入試にも使えます。</div>
+      <div class="card-units">
+        <span class="unit-tag">漢字・語彙</span>
+        <span class="unit-tag">文法（品詞）</span>
+        <span class="unit-tag">古文基礎</span>
+        <span class="unit-tag">読解のコツ</span>
+      </div>
+      <div class="card-footer-link">デモを見る <span>→</span></div>
+    </a>
+
+    <a class="subject-card s3" href="https://realizefield.github.io/Japanese/yondeikou_index.html" target="_blank">
+      <div class="card-top">
+        <div class="card-emoji">📖</div>
+        <div class="card-info">
+          <div class="card-category">国語</div>
+          <div class="card-name">現代文読解（基礎）<br><span style="font-size:0.75rem;font-weight:400">読んでいこう 全7回＋読解捜査室</span></div>
+          <div class="card-level">⭐　中学〜高校基礎レベル</div>
+        </div>
+      </div>
+      <div class="card-desc">近代文学の創作要約文で段階的に読解力を育成。段落要点→消去法→読解捜査の3ステップ。中学・高校・高認対応。</div>
+      <div class="card-units">
+        <span class="unit-tag">読解捜査室</span>
+        <span class="unit-tag">消去法</span>
+        <span class="unit-tag">全7回</span>
+      </div>
+      <div class="card-footer-link">デモを見る <span>→</span></div>
+    </a>
+
+    <!-- 理科 -->
+    <a class="subject-card s4" href="https://realizefield.github.io/j-science/" target="_blank">
+      <div class="card-top">
+        <div class="card-emoji">🔬</div>
+        <div class="card-info">
+          <div class="card-category">理科</div>
+          <div class="card-name">生物・化学・物理・地学</div>
+          <div class="card-level">⭐ 中1〜中3対応</div>
+        </div>
+      </div>
+      <div class="card-desc">図解を使ったわかりやすい解説で理科の苦手を克服。実験の仕組みも視覚的に学べます。</div>
+      <div class="card-units">
+        <span class="unit-tag">細胞・生物</span>
+        <span class="unit-tag">化学変化</span>
+        <span class="unit-tag">電気・物理</span>
+        <span class="unit-tag">天体・地学</span>
+      </div>
+      <div class="card-footer-link">デモを見る <span>→</span></div>
+    </a>
+
+    <!-- 社会 -->
+    <a class="subject-card s5" href="https://realizefield.github.io/kamakura_gamba/" target="_blank">
+      <div class="card-top">
+        <div class="card-emoji">🌏</div>
+        <div class="card-info">
+          <div class="card-category">社会</div>
+          <div class="card-name">歴史・地理・公民</div>
+          <div class="card-level">⭐ 中1〜中3対応</div>
+        </div>
+      </div>
+      <div class="card-desc">年表・地図を活用した暗記で歴史の流れをつかむ。地理・公民の重要語句も効率よく定着。</div>
+      <div class="card-units">
+        <span class="unit-tag">日本史の流れ</span>
+        <span class="unit-tag">世界地理</span>
+        <span class="unit-tag">日本地理</span>
+        <span class="unit-tag">公民・政治</span>
+      </div>
+      <div class="card-footer-link">デモを見る <span>→</span></div>
+    </a>
+
+    <!-- 中学地理（帝国書院）NEW -->
+    <a class="subject-card s5" href="https://realizefield.github.io/j-chiri/geo_index.html" target="_blank">
+      <div class="card-top">
+        <div class="card-emoji">🗾</div>
+        <div class="card-info">
+          <div class="card-category" style="background:#1d4ed8;">社会・地理</div>
+          <div class="card-name">中学地理（帝国書院）</div>
+          <div class="card-level">⭐ 中1〜中2対応　NEW</div>
+        </div>
+      </div>
+      <div class="card-desc">実際の教科書の図・地図・写真をそのまま画面に表示。図を見ながら語群をタップして空欄を埋める、GAMBA独自の地図問題ドリルです。熊本市採択の帝国書院「中学生の地理」に完全対応。</div>
+      <div class="card-units" style="--tag-bg:#dbeafe;--tag-col:#1d4ed8;">
+        <span class="unit-tag" style="background:#dbeafe;color:#1d4ed8;">世界の地図・位置</span>
+        <span class="unit-tag" style="background:#dbeafe;color:#1d4ed8;">日本の領域・領土問題</span>
+        <span class="unit-tag" style="background:#dbeafe;color:#1d4ed8;">7地方区分・山脈・河川</span>
+        <span class="unit-tag" style="background:#dbeafe;color:#1d4ed8;">気候・海流・雨温図</span>
+        <span class="unit-tag" style="background:#dbeafe;color:#1d4ed8;">扇状地・三角州</span>
+      </div>
+      <div class="card-footer-link" style="background:#dbeafe;color:#1d4ed8;">単元表を見る <span>→</span></div>
+    </a>
+
+  </div>
+
+  <!-- ===== 特長 ===== -->
+  <div class="section-title">GAMBAシステムの3つの特長</div>
+  <div class="features-grid">
+    <div class="feature-item">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">短時間で定着</div>
+      <div class="feature-text">暗記カード方式で繰り返し学習。スキマ時間を活用して効率よく覚えられます。</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">📱</div>
+      <div class="feature-title">スマホ・タブレット対応</div>
+      <div class="feature-text">いつでもどこでも学習可能。部活後の電車の中でもサクッと復習できます。</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🎯</div>
+      <div class="feature-title">基礎ゼロから高校入試まで</div>
+      <div class="feature-text">どこでつまずいても大丈夫。基礎から段階的に実力を積み上げられます。</div>
+    </div>
+  </div>
+
+  <!-- ===== メインCTA ===== -->
+  <div class="cta-section">
+    <div class="cta-title">まずは無料体験指導へ</div>
+    <div class="cta-text">
+      GAMBAシステムを実際に体験しながら、<br>
+      お子様に合った学習プランをご提案します。<br>
+      お気軽にお問い合わせください。
+    </div>
+    <a class="cta-btn" href="tel:0963826761">📞 お電話でのお問い合わせ　096-382-6761</a>
+  </div>
+
+</div>
+
+<footer>
+  © 江原予備校 / 株式会社 アイラコーポレーション<br>
+  〒862-0950　熊本市中央区水前寺3丁目1-3<br>
+  TEL：096-382-6761　｜　Mail：<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3a51555d5f547a59555b494e1455595414545f14504a">[email&#160

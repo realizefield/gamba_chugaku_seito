@@ -590,7 +590,18 @@
 
   var PASSWORD = 'gamba2026';
 
+  // ============================================================
+  // 【一時公開モード】しばらく誰でも入れるようにする場合は false のまま。
+  // ログイン制に戻すときは true にしてください。
+  // ============================================================
+  var LOGIN_REQUIRED = false;
+
   (function() {
+    if (!LOGIN_REQUIRED) {
+      document.getElementById('pw-overlay').style.display = 'none';
+      return;
+    }
+
     var auth = localStorage.getItem('gamba_auth');
     var name = localStorage.getItem('gamba_name');
     if (auth === 'ok') {

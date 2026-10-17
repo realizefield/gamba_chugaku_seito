@@ -183,23 +183,10 @@
   .tpdf-open-btn:hover { opacity: 0.85; }
   @media(max-width:560px){ .tpdf-grades-row { flex-direction: column; } .tpdf-grade-card { border-right: none; border-bottom: 1px solid #f0f0f0; } .tpdf-grade-card:last-child { border-bottom: none; } }
 
-  /* ===== 確認テストパネル ===== */
-  .kt-panel-wrap { max-width: 860px; margin: 0 auto 28px; padding: 0 20px; }
-  .kt-panel { background: var(--white); border-radius: var(--radius); overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
-  .kt-head { background: var(--navy); color: white; padding: 20px 24px; display: flex; align-items: center; gap: 14px; }
-  .kt-icon { font-size: 2rem; flex-shrink: 0; }
-  .kt-title { font-size: 1rem; font-weight: 700; margin-bottom: 3px; }
-  .kt-sub { font-size: 0.75rem; color: rgba(255,255,255,0.75); }
-  .kt-body { padding: 8px 24px 4px; }
-  .kt-row { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid #f0f0f0; flex-wrap: wrap; }
-  .kt-row:last-child { border-bottom: none; }
-  .kt-unit { font-size: 0.9rem; font-weight: 700; color: var(--navy); min-width: 84px; }
-  .kt-btns { display: flex; gap: 10px; flex-wrap: wrap; }
-  .kt-btn { display: inline-block; background: var(--orange); color: white; font-weight: 700; font-size: 0.85rem; padding: 10px 22px; border-radius: 24px; text-decoration: none; letter-spacing: 0.06em; transition: opacity 0.2s, transform 0.2s; box-shadow: 0 3px 10px rgba(232,101,10,0.28); }
-  .kt-btn:hover { opacity: 0.88; transform: translateY(-1px); }
-  .kt-btn.kt-kiso { background: #1a3a6b; box-shadow: 0 3px 10px rgba(26,58,107,0.28); }
-  .kt-foot { padding: 14px 24px 18px; background: #fafaf8; font-size: 0.72rem; color: var(--muted, #777); line-height: 1.8; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-  .kt-foot a { color: var(--navy); font-weight: 700; text-decoration: underline; }
+  /* ===== 下部ボタン ===== */
+  .bottom-btn-wrap { max-width: 860px; margin: 0 auto; padding: 0 20px 20px; text-align: center; }
+  .bottom-btn { display: inline-block; background: var(--orange); color: white; font-weight: 700; font-size: 1rem; padding: 16px 40px; border-radius: 40px; text-decoration: none; letter-spacing: 0.08em; box-shadow: 0 4px 14px rgba(232,101,10,0.35); transition: opacity 0.2s, transform 0.2s; }
+  .bottom-btn:hover { opacity: 0.88; transform: translateY(-2px); }
 </style>
 </head>
 <body>
@@ -741,37 +728,11 @@
 
 </div>
 
-<!-- ===== 確認テスト パネル ===== -->
-<div class="kt-panel-wrap">
-  <div class="section-title">確認テスト</div>
-  <div class="kt-panel">
-    <div class="kt-head">
-      <div class="kt-icon">📝</div>
-      <div>
-        <div class="kt-title">中学1年数学　確認テスト</div>
-        <div class="kt-sub">どこでつまずいているかが分かるテスト ／ 途中でやめても続きからできます</div>
-      </div>
-    </div>
-    <div class="kt-body">
-      <div class="kt-row">
-        <div class="kt-unit">方程式</div>
-        <div class="kt-btns">
-          <a class="kt-btn" href="https://script.google.com/macros/s/AKfycbzBkYxtS8A26-zvdqYlWIu6ad2jTq-KJgjs1tkDJCR9PcXcn6-M-odk1I3JpDdWqA5N/exec?t=eq1" target="_blank" rel="noopener">1回目 →</a>
-          <a class="kt-btn" href="https://script.google.com/macros/s/AKfycbzBkYxtS8A26-zvdqYlWIu6ad2jTq-KJgjs1tkDJCR9PcXcn6-M-odk1I3JpDdWqA5N/exec?t=eq2" target="_blank" rel="noopener">2回目 →</a>
-        </div>
-      </div>
-      <div class="kt-row">
-        <div class="kt-unit">一次関数</div>
-        <div class="kt-btns">
-          <a class="kt-btn kt-kiso" href="https://script.google.com/macros/s/AKfycbzBkYxtS8A26-zvdqYlWIu6ad2jTq-KJgjs1tkDJCR9PcXcn6-M-odk1I3JpDdWqA5N/exec?t=kansu1" target="_blank" rel="noopener">1回目（基礎） →</a>
-        </div>
-      </div>
-    </div>
-    <div class="kt-foot">
-      <div>名前を入力して始めます。1問ごとに「わかった／少し不安／もう一度教えてほしい」を選びましょう。<br>分数は縦の形で表示されます。</div>
-      <a href="https://script.google.com/macros/s/AKfycbzBkYxtS8A26-zvdqYlWIu6ad2jTq-KJgjs1tkDJCR9PcXcn6-M-odk1I3JpDdWqA5N/exec" target="_blank" rel="noopener">テスト一覧を開く →</a>
-    </div>
-  </div>
+<!-- ===== 下部ボタン ===== -->
+<div class="bottom-btn-wrap">
+  <a class="bottom-btn" href="https://script.google.com/macros/s/AKfycbzBkYxtS8A26-zvdqYlWIu6ad2jTq-KJgjs1tkDJCR9PcXcn6-M-odk1I3JpDdWqA5N/exec" target="_blank" rel="noopener">
+    📋 こちらをクリック →
+  </a>
 </div>
 
 <footer>

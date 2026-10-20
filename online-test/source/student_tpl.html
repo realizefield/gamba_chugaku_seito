@@ -1,0 +1,261 @@
+<title>GAMBA オンラインテスト</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap">
+<style id="kcss">
+__KATEXCSS__
+</style>
+<style>
+/* Layout: 上に教科タブ、下に単元カード。テスト中は1問ずつ読める縦長の問題リスト＋固定の採点バー。 */
+:root{
+  --bg:#f2f5f4; --panel:#ffffff; --ink:#16252b; --muted:#566a72; --line:#d3dcdc;
+  --accent:#0e6770; --accent-ink:#ffffff; --accent-soft:#dcedee;
+  --ok:#1b7a4a; --ok-soft:#dff1e6; --ng:#b3382c; --ng-soft:#f8e2de; --mark:#c98a10;
+  --font:'BIZ UDPGothic','Hiragino Sans','Yu Gothic','Noto Sans JP',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10191c; --panel:#18262a; --ink:#e6eef0; --muted:#9db1b7; --line:#2c4046;
+  --accent:#5fc3cc; --accent-ink:#06282c; --accent-soft:#1c3b40;
+  --ok:#62d49a; --ok-soft:#173a29; --ng:#ff8d80; --ng-soft:#42201c; --mark:#e8b64a; color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#10191c; --panel:#18262a; --ink:#e6eef0; --muted:#9db1b7; --line:#2c4046;
+  --accent:#5fc3cc; --accent-ink:#06282c; --accent-soft:#1c3b40;
+  --ok:#62d49a; --ok-soft:#173a29; --ng:#ff8d80; --ng-soft:#42201c; --mark:#e8b64a; color-scheme:dark;}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.75;margin:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 28px}
+.wrap{max-width:760px;margin:0 auto}
+header.top{padding-top:22px;padding-bottom:6px}
+.brand{font-size:.8rem;letter-spacing:.12em;color:var(--muted);margin:0}
+.brandrow{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.tpanel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;margin-top:20px}
+.tpanel input[type=password]{font:inherit;font-size:1rem;padding:10px 12px;border:2px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%;max-width:280px}
+.err{color:var(--ng);font-weight:700;margin:8px 0 0;min-height:1.6em}
+.trow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+.trow .lb{min-width:4.5em;font-weight:700}
+.tframe{width:100%;border:1px solid var(--line);border-radius:8px;background:#fff;margin-top:10px;min-height:300px}
+.btn.sm{padding:5px 12px;min-height:36px;font-size:.92rem}
+h1{font-size:1.6rem;line-height:1.3;margin:2px 0 14px;text-wrap:balance}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;border-bottom:2px solid var(--line)}
+.tab{font:inherit;font-weight:700;border:0;background:none;color:var(--muted);padding:10px 14px;cursor:pointer;white-space:nowrap;border-bottom:4px solid transparent;margin-bottom:-2px}
+.tab[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+.tab:focus-visible,.btn:focus-visible,.choice:focus-within{outline:3px solid var(--mark);outline-offset:2px}
+h2.sec{font-size:1.05rem;margin:28px 0 10px;color:var(--ink)}
+.group{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.group h3{font-size:1.02rem;margin:0 0 10px;line-height:1.5}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.btn{font:inherit;font-weight:700;border:2px solid var(--accent);background:var(--panel);color:var(--accent);border-radius:8px;padding:9px 16px;cursor:pointer;min-height:44px}
+.btn small{display:block;font-weight:400;font-size:.72rem;color:var(--muted);line-height:1.3}
+.btn:hover{background:var(--accent-soft)}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.empty{background:var(--panel);border:1px dashed var(--line);border-radius:10px;padding:26px 18px;color:var(--muted);margin-top:22px}
+.empty b{color:var(--ink);display:block;margin-bottom:4px}
+/* test */
+.testbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:10px 0 8px;border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.testbar .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.testbar .ttl{font-weight:700;font-size:.98rem;line-height:1.4;min-width:0}
+.link{font:inherit;background:none;border:0;color:var(--accent);text-decoration:underline;cursor:pointer;padding:6px 0;white-space:nowrap}
+.bar{height:8px;background:var(--line);border-radius:4px;margin-top:8px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .2s}
+.catlabel{font-size:.82rem;color:var(--accent);font-weight:700;margin:26px 0 8px;letter-spacing:.04em}
+.q{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.q .qt{margin:0 0 10px;font-size:1.04rem;line-height:1.8}
+.q .no{display:inline-block;min-width:2.6em;font-weight:700;color:var(--accent)}
+.choices{display:grid;gap:8px}
+.choice{display:flex;gap:10px;align-items:center;border:2px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;min-height:46px;background:var(--bg)}
+.choice input{position:absolute;opacity:0;pointer-events:none}
+.choice .lt{flex:none;width:1.9em;height:1.9em;border-radius:50%;border:2px solid var(--muted);display:grid;place-items:center;font-weight:700;font-size:.9rem;color:var(--muted)}
+.choice.sel{border-color:var(--accent);background:var(--accent-soft)}
+.choice.sel .lt{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.choice span.tx{min-width:0;overflow-wrap:anywhere}
+.locked .choice{cursor:default}
+.choice.right{border-color:var(--ok);background:var(--ok-soft)}
+.choice.right .lt{background:var(--ok);border-color:var(--ok);color:#fff}
+.choice.wrongsel{border-color:var(--ng);background:var(--ng-soft)}
+.choice.wrongsel .lt{background:var(--ng);border-color:var(--ng);color:#fff}
+.tag{margin-left:auto;font-size:.78rem;font-weight:700;white-space:nowrap}
+.right .tag{color:var(--ok)} .wrongsel .tag{color:var(--ng)}
+.verdict{font-weight:700;margin:0 0 6px;font-size:.92rem}
+.verdict.ok{color:var(--ok)} .verdict.ng{color:var(--ng)}
+.submitbar{position:sticky;bottom:0;z-index:5;background:var(--bg);padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);display:flex;align-items:center;gap:12px;justify-content:space-between;margin-top:8px}
+.submitbar .msg{font-size:.9rem;color:var(--muted)}
+/* result */
+.score{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 18px 16px;margin-top:16px}
+.score .big{font-size:2.6rem;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
+.score .big small{font-size:1.1rem;font-weight:400;color:var(--muted)}
+.score .pass{display:inline-block;margin-left:10px;padding:2px 12px;border-radius:99px;font-weight:700;font-size:.9rem;vertical-align:middle}
+.pass.y{background:var(--ok-soft);color:var(--ok)} .pass.n{background:var(--ng-soft);color:var(--ng)}
+.cats{display:grid;gap:10px;margin-top:14px}
+.cat{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:center}
+.cat .nm{font-size:.92rem;line-height:1.5}
+.cat .ct{font-variant-numeric:tabular-nums;font-weight:700;font-size:.95rem;text-align:right}
+.cat .meter{grid-column:1/-1;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.cat .meter i{display:block;height:100%}
+.cat.good .meter i{background:var(--ok)} .cat.rev .meter i{background:var(--mark)}
+.note{font-size:.88rem;color:var(--muted);margin:10px 0 0}
+.filters{display:flex;gap:8px;margin:18px 0 4px;flex-wrap:wrap}
+.chip{font:inherit;font-size:.9rem;border:2px solid var(--line);background:var(--panel);color:var(--ink);border-radius:99px;padding:6px 14px;cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:700}
+i.v{font-family:'Times New Roman','Noto Serif JP',serif;font-style:italic;padding:0 .04em}
+.katex{font-size:1.12em;white-space:nowrap}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.15;margin:0 .15em;font-size:.92em}
+.fr>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .2em}
+.fr>span:last-child{padding:0 .2em}
+@media (min-width:640px){.choices{grid-template-columns:1fr 1fr}}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+<div class="wrap">
+<header class="top">
+  <div class="brandrow"><p class="brand">江原予備校　GAMBA</p></div>
+  <h1>オンラインテスト</h1>
+  <div class="tabs" role="tablist" id="tabs"></div>
+</header>
+<main id="main"></main>
+</div>
+<script>
+var DATA=__DATA__;var SHEETS=__SHEETS__;var TENC="__TENC__";var TDATA=null;
+var LET=['ア','イ','ウ','エ'];
+var state={subj:'math',set:null,ans:[],done:false,filter:'all',t:null,tv:null};
+function $(i){return document.getElementById(i);}
+function h(t,a,c){var e=document.createElement(t);if(a)for(var k in a){if(k==='class')e.className=a[k];else if(k==='html')e.innerHTML=a[k];else e.setAttribute(k,a[k]);}
+  (c||[]).forEach(function(x){if(x==null)return;e.appendChild(typeof x==='string'?document.createTextNode(x):x);});return e;}
+function subjById(id){for(var i=0;i<DATA.length;i++)if(DATA[i].id===id)return DATA[i];return DATA[0];}
+function renderTabs(){var t=$('tabs');t.innerHTML='';DATA.forEach(function(s){
+  var b=h('button',{class:'tab',role:'tab','aria-selected':String(s.id===state.subj)},[s.name]);
+  b.onclick=function(){state.subj=s.id;state.set=null;state.t=null;try{history.replaceState(null,'','#'+s.id);}catch(e){}render();window.scrollTo(0,0);};t.appendChild(b);});}
+function findSet(id){for(var a=0;a<DATA.length;a++)for(var b=0;b<DATA[a].sections.length;b++)for(var c=0;c<DATA[a].sections[b].groups.length;c++){var g=DATA[a].sections[b].groups[c];for(var d=0;d<g.sets.length;d++)if(g.sets[d].id===id)return g.sets[d];}return null;}
+function renderHome(){
+  var m=$('main');m.innerHTML='';var s=subjById(state.subj);
+  if(!s.sections.length){m.appendChild(h('div',{class:'empty'},[h('b',{},[s.name+'のテストは準備中です']),'問題ができしだい、ここに入ります。']));return;}
+  s.sections.forEach(function(sec){
+    m.appendChild(h('h2',{class:'sec'},[sec.name]));
+    sec.groups.forEach(function(g){
+      var g1=h('div',{class:'group'},[h('h3',{},[g.name])]);var bs=h('div',{class:'btns'});
+      g.sets.forEach(function(st){var b=h('button',{class:'btn'},[st.label,h('small',{},['全'+st.n+'問・約'+st.min+'分'])]);b.onclick=function(){openSet(st.id);};bs.appendChild(b);});
+      g1.appendChild(bs);
+      var pr=h('div',{class:'btns prow'});
+      var b1=h('button',{class:'btn sm',type:'button'},['問題を見る・印刷']);b1.onclick=function(){openSheet(g,'s');};
+      var b2=h('button',{class:'btn sm',type:'button'},['講師用（合言葉）']);b2.onclick=function(){teacherOpen(g);};
+      pr.appendChild(b1);pr.appendChild(b2);g1.appendChild(pr);m.appendChild(g1);});
+  });
+}
+function openSet(id){state.set=findSet(id);state.ans=new Array(state.set.qs.length).fill(-1);state.done=false;state.filter='all';render();window.scrollTo(0,0);}
+function title(st){return (st.title.indexOf('第')>=0||st.label==='テストをはじめる')?st.title:st.title;}
+function renderQ(st,i,showRes){
+  var q=st.qs[i];var wrap=h('div',{class:'q',id:'q'+i});
+  var ok=state.ans[i]===q.a;
+  if(showRes)wrap.appendChild(h('p',{class:'verdict '+(ok?'ok':'ng')},[ok?'○ せいかい':'× ざんねん（正しい答えは '+LET[q.a]+'）']));
+  wrap.appendChild(h('p',{class:'qt'},[h('span',{class:'no'},['問'+(i+1)]),h('span',{html:q.q})]));
+  var ch=h('div',{class:'choices'+(showRes?' locked':'')});
+  q.ch.forEach(function(t,j){
+    var cls='choice'+(state.ans[i]===j?' sel':'');var tag=null;
+    if(showRes){if(j===q.a){cls+=' right';tag=h('span',{class:'tag'},['正解']);}else if(state.ans[i]===j){cls+=' wrongsel';tag=h('span',{class:'tag'},['あなたの答え']);}}
+    var lab=h('label',{class:cls},[h('input',{type:'radio',name:'q'+i,id:'q'+i+'c'+j,value:String(j)}),h('span',{class:'lt'},[LET[j]]),h('span',{class:'tx',html:t}),tag]);
+    var inp=lab.firstChild;if(state.ans[i]===j)inp.checked=true;if(showRes)inp.disabled=true;
+    inp.onchange=function(){state.ans[i]=j;updateAfterPick(i);};
+    ch.appendChild(lab);});
+  wrap.appendChild(ch);return wrap;}
+function updateAfterPick(i){
+  var st=state.set;var qs=document.querySelectorAll('#q'+i+' .choice');qs.forEach(function(l,j){l.classList.toggle('sel',state.ans[i]===j);});
+  var n=state.ans.filter(function(a){return a>=0;}).length;var tot=st.qs.length;
+  $('prog').textContent=n+' / '+tot+' 問 答えた';$('barfill').style.width=(100*n/tot)+'%';
+  var b=$('submit');b.disabled=n<tot;$('submsg').textContent=n<tot?'あと'+(tot-n)+'問で採点できます':'全部答えました。採点できます。';}
+function renderTest(){
+  var m=$('main');m.innerHTML='';var st=state.set;var tot=st.qs.length;
+  var n=state.ans.filter(function(a){return a>=0;}).length;
+  var back=h('button',{class:'link'},['← 一覧にもどる']);back.onclick=function(){state.set=null;render();window.scrollTo(0,0);};
+  m.appendChild(h('div',{class:'testbar'},[h('div',{class:'row'},[h('div',{class:'ttl'},[st.title+(st.label!=='テストをはじめる'?'':'')]),back]),
+    h('div',{class:'row'},[h('div',{id:'prog',class:'note',style:'margin:6px 0 0'},[n+' / '+tot+' 問 答えた'])]),
+    h('div',{class:'bar'},[h('i',{id:'barfill',style:'width:'+(100*n/tot)+'%'})])]));
+  var last=-1;
+  st.qs.forEach(function(q,i){
+    if(st.cats.length>1&&q.c!==last){last=q.c;m.appendChild(h('div',{class:'catlabel',html:st.cats[q.c][0]}));}
+    m.appendChild(renderQ(st,i,false));});
+  var sb=h('button',{class:'btn primary',id:'submit'},['採点する']);sb.disabled=n<tot;
+  sb.onclick=function(){state.done=true;render();window.scrollTo(0,0);};
+  m.appendChild(h('div',{class:'submitbar'},[h('div',{class:'msg',id:'submsg'},[n<tot?'あと'+(tot-n)+'問で採点できます':'全部答えました。採点できます。']),sb]));
+}
+function renderResult(){
+  var m=$('main');m.innerHTML='';var st=state.set;var tot=st.qs.length;
+  var right=0;st.qs.forEach(function(q,i){if(state.ans[i]===q.a)right++;});
+  var back=h('button',{class:'link'},['← 一覧にもどる']);back.onclick=function(){state.set=null;render();window.scrollTo(0,0);};
+  m.appendChild(h('div',{class:'testbar'},[h('div',{class:'row'},[h('div',{class:'ttl'},[st.title+'　結果']),back])]));
+  var sc=h('div',{class:'score'});
+  var big=h('div',{class:'big'},[String(right),h('small',{},[' / '+tot+' 問'])]);
+  if(st.pass_){big.appendChild(h('span',{class:'pass '+(right>=st.pass_?'y':'n')},[right>=st.pass_?'合格':'あと'+(st.pass_-right)+'問で合格']));}
+  sc.appendChild(big);
+  if(st.pass_)sc.appendChild(h('p',{class:'note'},['合格ラインは '+st.pass_+' 問以上です。']));
+  if(st.cats.length>1){
+    var cc=h('div',{class:'cats'});
+    st.cats.forEach(function(c,ci){var t=0,r=0;st.qs.forEach(function(q,i){if(q.c===ci){t++;if(state.ans[i]===q.a)r++;}});
+      if(!t)return;var good=r/t>=0.75;
+      var row=h('div',{class:'cat '+(good?'good':'rev')},[h('div',{class:'nm',html:c[0]}),h('div',{class:'ct'},[r+' / '+t+(good?'':'　復習しよう')]),h('div',{class:'meter'},[h('i',{style:'width:'+(100*r/t)+'%'})])]);
+      cc.appendChild(row);});
+    sc.appendChild(h('p',{class:'note',style:'margin-top:14px'},['分類ごとの正解数']));sc.appendChild(cc);
+    sc.appendChild(h('p',{class:'note'},['「復習しよう」の分類は、先生といっしょに見直しましょう。']));
+  }
+  var fk='gamba_feel_'+st.id,fv='';try{fv=localStorage.getItem(fk)||'';}catch(e){}
+  var fb=h('div',{class:'feel'});fb.appendChild(h('p',{class:'note',style:'margin-top:14px'},['このテストの内容は、どうでしたか？']));
+  var fr=h('div',{class:'btns'}),fm=h('p',{class:'note feelmsg'},['']);
+  function showFeel(v){fm.textContent=v==='ng'?'先生に「'+st.title+'」をもう一度教えてほしいと伝えましょう。':(v==='ok'?'よくがんばりました。':'');}
+  [['ok','わかった'],['ng','少し不安、もう一度教えてほしい']].forEach(function(x){var b=h('button',{class:'chip','aria-pressed':String(fv===x[0]),type:'button'},[x[1]]);
+    b.onclick=function(){fv=x[0];try{localStorage.setItem(fk,fv);}catch(e){}fr.querySelectorAll('button').forEach(function(y,i){y.setAttribute('aria-pressed',String(['ok','ng'][i]===fv));});showFeel(fv);};fr.appendChild(b);});
+  showFeel(fv);fb.appendChild(fr);fb.appendChild(fm);sc.appendChild(fb);
+  m.appendChild(sc);
+  var f=h('div',{class:'filters'});
+  [['all','全部の問題'],['ng','まちがえた問題だけ']].forEach(function(x){var b=h('button',{class:'chip','aria-pressed':String(state.filter===x[0])},[x[1]]);b.onclick=function(){state.filter=x[0];renderResult();};f.appendChild(b);});
+  m.appendChild(f);
+  var shown=0;st.qs.forEach(function(q,i){if(state.filter==='ng'&&state.ans[i]===q.a)return;shown++;m.appendChild(renderQ(st,i,true));});
+  if(!shown)m.appendChild(h('div',{class:'empty'},[h('b',{},['まちがえた問題はありません']),'全問正解です。']));
+  var again=h('button',{class:'btn primary'},['もう一度やる']);again.onclick=function(){openSet(st.id);};
+  var home=h('button',{class:'btn'},['一覧にもどる']);home.onclick=function(){state.set=null;render();window.scrollTo(0,0);};
+  m.appendChild(h('div',{class:'btns',style:'margin-top:18px'},[again,home]));
+}
+
+
+function b64(x){var b=atob(x),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u;}
+async function gunzip(u8){var ds=new DecompressionStream('gzip');var w=ds.writable.getWriter();w.write(u8);w.close();return new Response(ds.readable).text();}
+async function unlock(pass){var raw=b64(TENC),salt=raw.slice(0,16),iv=raw.slice(16,28),ct=raw.slice(28);
+  var km=await crypto.subtle.importKey('raw',new TextEncoder().encode(pass),'PBKDF2',false,['deriveKey']);
+  var key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:200000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
+  var pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:iv},key,ct);return JSON.parse(await gunzip(new Uint8Array(pt)));}
+function sheetDoc(body,title){return '<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>'+title+'</title><style>'+$('kcss').textContent+'\n'+SHEETS.css+'</style></head><body>'+body+'</body></html>';}
+function showSheet(g,body,label){
+  var m=$('main');m.innerHTML='';window.scrollTo(0,0);
+  var back=h('button',{class:'link'},['← 一覧にもどる']);back.onclick=function(){render();window.scrollTo(0,0);};
+  m.appendChild(h('div',{class:'testbar'},[h('div',{class:'row'},[h('div',{class:'ttl'},[g.name+'　'+label]),back])]));
+  var doc=sheetDoc(body,g.name+' '+label);
+  var bar=h('div',{class:'btns',style:'margin:10px 0'});
+  var pb=h('button',{class:'btn sm',type:'button'},['印刷する']);var sv=h('button',{class:'btn sm',type:'button'},['ファイルに保存']);
+  var msg=h('p',{class:'note'},['印刷できないときは「ファイルに保存」したファイルを開き、ブラウザの印刷（Ctrl+P／⌘P）を使ってください。']);
+  var fr=h('iframe',{class:'tframe',title:label});fr.srcdoc=doc;
+  fr.onload=function(){try{fr.style.height=(fr.contentDocument.documentElement.scrollHeight+24)+'px';}catch(e){fr.style.height='1200px';}};
+  pb.onclick=function(){try{fr.contentWindow.focus();fr.contentWindow.print();}catch(e){msg.textContent='この画面からは印刷できませんでした。「ファイルに保存」から保存したファイルを開いて印刷してください。';}};
+  sv.onclick=async function(){try{var d=await claude.use('downloads');if(!d){msg.textContent='この画面では保存できません。';return;}
+    await d.save({filename:g.name.replace(/[\\\/:*?"<>|\s　]+/g,'_')+'_'+label+'.html',data:doc});}catch(e){if(!e||e.code!=='declined')msg.textContent='保存できませんでした。';}};
+  bar.appendChild(pb);bar.appendChild(sv);m.appendChild(bar);m.appendChild(msg);m.appendChild(fr);}
+function openSheet(g,k){showSheet(g,SHEETS.s[g.k],'問題');}
+function teacherOpen(g){
+  if(TDATA)return teacherList(g);
+  var m=$('main');m.innerHTML='';window.scrollTo(0,0);
+  var back=h('button',{class:'link'},['← 一覧にもどる']);back.onclick=function(){render();};
+  m.appendChild(h('div',{class:'testbar'},[h('div',{class:'row'},[h('div',{class:'ttl'},['講師用　'+g.name]),back])]));
+  var f=h('div',{class:'score'},[h('p',{class:'note'},['合言葉を入力してください。']),
+    h('input',{type:'password',id:'tpass',autocomplete:'off',style:'font:inherit;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);width:100%;max-width:280px'}),
+    h('p',{class:'note',id:'terr',style:'color:var(--ng)'},['']),h('div',{class:'btns'},[h('button',{class:'btn sm',id:'tok',type:'button'},['開く'])])]);
+  m.appendChild(f);
+  async function go(){try{TDATA=await unlock($('tpass').value);teacherList(g);}catch(e){$('terr').textContent='合言葉がちがいます。';}}
+  $('tok').onclick=go;$('tpass').onkeydown=function(e){if(e.key==='Enter')go();};$('tpass').focus();}
+function teacherList(g){
+  var m=$('main');m.innerHTML='';window.scrollTo(0,0);
+  var back=h('button',{class:'link'},['← 一覧にもどる']);back.onclick=function(){render();};
+  m.appendChild(h('div',{class:'testbar'},[h('div',{class:'row'},[h('div',{class:'ttl'},['講師用　'+g.name]),back])]));
+  var d=TDATA[g.k];var bs=h('div',{class:'btns',style:'margin-top:14px'});
+  [['p','問題を見る・印刷','問題（講師用）'],['a','解答解説を見る・印刷','解答解説（講師用）']].forEach(function(x){var b=h('button',{class:'btn'},[x[1]]);b.onclick=function(){showSheet(g,d[x[0]],x[2]);};bs.appendChild(b);});
+  m.appendChild(bs);}
+function render(){renderTabs();if(!state.set)renderHome();else if(!state.done)renderTest();else renderResult();}
+(function(){var hs=(location.hash||'').replace('#','');for(var i=0;i<DATA.length;i++)if(DATA[i].id===hs)state.subj=hs;render();})();
+</script>

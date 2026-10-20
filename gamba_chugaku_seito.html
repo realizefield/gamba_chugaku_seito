@@ -52,14 +52,14 @@
     25%{ transform:translateX(-6px); }
     75%{ transform:translateX(6px); }
   }
-  #pw-btn {
+  #pw-btn, #teacher-btn {
     width: 100%; padding: 12px; background: var(--orange); color: white;
     border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 700;
     font-family: inherit; cursor: pointer; letter-spacing: 0.08em;
     transition: opacity 0.2s;
   }
-  #pw-btn:hover { opacity: 0.85; }
-  #pw-error {
+  #pw-btn:hover, #teacher-btn:hover { opacity: 0.85; }
+  #pw-error, #teacher-error {
     color: #e53e3e; font-size: 0.78rem; margin-top: 10px;
     display: none; font-weight: 700;
   }
@@ -206,6 +206,17 @@
     <input id="pw-input" class="pw-input" type="password" placeholder="パスワード" autocomplete="off" />
     <button id="pw-btn" onclick="checkPassword()">ログイン</button>
     <div id="pw-error">IDまたはパスワードが違います。もう一度お試しください。</div>
+
+    <!-- 講師用：合言葉で開く -->
+    <div id="teacher-toggle" style="margin-top:18px; font-size:0.78rem;">
+      <a href="#" onclick="toggleTeacher(); return false;" style="color:var(--navy); text-decoration:underline;">🧑‍🏫 講師の方はこちら（合言葉）</a>
+    </div>
+    <div id="teacher-box" style="display:none; margin-top:14px; text-align:left;">
+      <label class="pw-label" for="teacher-input">🔑 合言葉</label>
+      <input id="teacher-input" class="pw-input" type="password" placeholder="合言葉" autocomplete="off" />
+      <button id="teacher-btn" onclick="checkTeacher()">講師として開く</button>
+      <div id="teacher-error">合言葉が違います。もう一度お試しください。</div>
+    </div>
   </div>
 </div>
 
@@ -359,12 +370,31 @@
           <div class="card-level">⭐ 中1〜中3対応</div>
         </div>
       </div>
-      <div class="card-desc">正比例・反比例から一次関数・二次関数まで、グラフと式を関連付けて学習。視覚的に理解できます。</div>
+      <div class="card-desc">正比例・反比例・一次関数を、グラフと式を関連付けて学習。視覚的に理解できます。</div>
       <div class="card-units">
         <span class="unit-tag">正比例・反比例</span>
         <span class="unit-tag">一次関数</span>
-        <span class="unit-tag">二次関数</span>
         <span class="unit-tag">グラフ</span>
+      </div>
+      <div class="card-footer-link">デモを見る <span>→</span></div>
+    </a>
+
+    <!-- 数学：二次関数 -->
+    <a class="subject-card s2" href="https://realizefield.github.io/j-math-kansu/nijikansuu.html" target="_blank">
+      <div class="card-top">
+        <div class="card-emoji">📈</div>
+        <div class="card-info">
+          <div class="card-category">数学</div>
+          <div class="card-name">二次関数</div>
+          <div class="card-level">⭐ 中3対応</div>
+        </div>
+      </div>
+      <div class="card-desc">y＝ax² のグラフから変域・交点・面積まで、図とステップで丁寧に解説。基礎から応用まで段階的に学べます。</div>
+      <div class="card-units">
+        <span class="unit-tag">放物線</span>
+        <span class="unit-tag">変域</span>
+        <span class="unit-tag">交点・面積</span>
+        <span class="unit-tag">等積変形</span>
       </div>
       <div class="card-footer-link">デモを見る <span>→</span></div>
     </a>
@@ -762,6 +792,9 @@
 
   var PASSWORD = 'gamba2026';
 
+  // 講師用の合言葉（生徒ID・パスワードの代わりに、これを入れると開きます）
+  var TEACHER_WORD = 'kogen';
+
   // ============================================================
   // 【一時公開モード】しばらく誰でも入れるようにする場合は false のまま。
   // ログイン制に戻すときは true にしてください。
@@ -788,6 +821,9 @@
     document.getElementById('id-input').addEventListener('keydown', function(e) {
       if (e.key === 'Enter') document.getElementById('pw-input').focus();
     });
+    document.getElementById('teacher-input').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') checkTeacher();
+    });
   })();
 
   function showWelcome(name) {
@@ -796,6 +832,36 @@
     var nameEl = document.getElementById('welcome-name');
     nameEl.textContent = name;
     bar.style.display = 'block';
+  }
+
+  function toggleTeacher() {
+    var box = document.getElementById('teacher-box');
+    var show = box.style.display === 'none';
+    box.style.display = show ? 'block' : 'none';
+    if (show) document.getElementById('teacher-input').focus();
+  }
+
+  function checkTeacher() {
+    var input = document.getElementById('teacher-input');
+    var error = document.getElementById('teacher-error');
+    var overlay = document.getElementById('pw-overlay');
+    if (input.value.trim().toLowerCase() === TEACHER_WORD) {
+      try {
+        localStorage.setItem('gamba_auth', 'ok');
+        localStorage.setItem('gamba_name', '先生');
+      } catch (e) {}
+      showWelcome('先生');
+      overlay.style.transition = 'opacity 0.4s ease';
+      overlay.style.opacity = '0';
+      setTimeout(function() { overlay.style.display = 'none'; }, 400);
+    } else {
+      input.classList.remove('error');
+      void input.offsetWidth;
+      input.classList.add('error');
+      error.style.display = 'block';
+      input.value = '';
+      input.focus();
+    }
   }
 
   function checkPassword() {

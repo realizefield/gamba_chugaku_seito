@@ -52,14 +52,14 @@
     25%{ transform:translateX(-6px); }
     75%{ transform:translateX(6px); }
   }
-  #pw-btn, #teacher-btn {
+  #pw-btn {
     width: 100%; padding: 12px; background: var(--orange); color: white;
     border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 700;
     font-family: inherit; cursor: pointer; letter-spacing: 0.08em;
     transition: opacity 0.2s;
   }
-  #pw-btn:hover, #teacher-btn:hover { opacity: 0.85; }
-  #pw-error, #teacher-error {
+  #pw-btn:hover { opacity: 0.85; }
+  #pw-error {
     color: #e53e3e; font-size: 0.78rem; margin-top: 10px;
     display: none; font-weight: 700;
   }
@@ -183,6 +183,14 @@
   .tpdf-open-btn:hover { opacity: 0.85; }
   @media(max-width:560px){ .tpdf-grades-row { flex-direction: column; } .tpdf-grade-card { border-right: none; border-bottom: 1px solid #f0f0f0; } .tpdf-grade-card:last-child { border-bottom: none; } }
 
+
+  /* ===== 算数パネル ===== */
+  .sansu-links { display: flex; flex-wrap: wrap; gap: 10px; padding: 16px 24px; border-bottom: 1px solid #f0f0f0; }
+  .sansu-link { flex: 1 1 220px; display: block; text-decoration: none; border: 1.5px solid #e3e3e3; border-radius: 12px; padding: 12px 16px; color: var(--text); transition: border-color 0.2s, background 0.2s; }
+  .sansu-link:hover { border-color: var(--orange); background: var(--orange-light); }
+  .sansu-link b { display: block; font-size: 0.85rem; margin-bottom: 2px; }
+  .sansu-link span { font-size: 0.7rem; color: var(--muted, #777); line-height: 1.6; }
+
   /* ===== 下部ボタン ===== */
   .bottom-btn-wrap { max-width: 860px; margin: 0 auto; padding: 0 20px 20px; text-align: center; }
   .bottom-btn { display: inline-block; background: var(--orange); color: white; font-weight: 700; font-size: 1rem; padding: 16px 40px; border-radius: 40px; text-decoration: none; letter-spacing: 0.08em; box-shadow: 0 4px 14px rgba(232,101,10,0.35); transition: opacity 0.2s, transform 0.2s; }
@@ -206,17 +214,6 @@
     <input id="pw-input" class="pw-input" type="password" placeholder="パスワード" autocomplete="off" />
     <button id="pw-btn" onclick="checkPassword()">ログイン</button>
     <div id="pw-error">IDまたはパスワードが違います。もう一度お試しください。</div>
-
-    <!-- 講師用：合言葉で開く -->
-    <div id="teacher-toggle" style="margin-top:18px; font-size:0.78rem;">
-      <a href="#" onclick="toggleTeacher(); return false;" style="color:var(--navy); text-decoration:underline;">🧑‍🏫 講師の方はこちら（合言葉）</a>
-    </div>
-    <div id="teacher-box" style="display:none; margin-top:14px; text-align:left;">
-      <label class="pw-label" for="teacher-input">🔑 合言葉</label>
-      <input id="teacher-input" class="pw-input" type="password" placeholder="合言葉" autocomplete="off" />
-      <button id="teacher-btn" onclick="checkTeacher()">講師として開く</button>
-      <div id="teacher-error">合言葉が違います。もう一度お試しください。</div>
-    </div>
   </div>
 </div>
 
@@ -577,6 +574,26 @@
       <div class="card-footer-link">目次を見る <span>→</span></div>
     </a>
 
+    <!-- 理科：天気とその変化（中2） -->
+    <a class="subject-card s4" href="https://realizefield.github.io/j-science-tenki/" target="_blank">
+      <div class="card-top">
+        <div class="card-emoji">🌤️</div>
+        <div class="card-info">
+          <div class="card-category">理科</div>
+          <div class="card-name">天気とその変化<br><span style="font-size:0.75rem;font-weight:400">気象観測・湿度・雲のでき方・前線と気団 全7章</span></div>
+          <div class="card-level">⭐ 中2対応　NEW</div>
+        </div>
+      </div>
+      <div class="card-desc">大気圧・天気記号・湿度の計算から、雲のでき方、高気圧と低気圧、前線と気団、日本の天気まで、図とともにわかりやすく解説。語群から選ぶ問題と4択問題で確実に定着できます。</div>
+      <div class="card-units">
+        <span class="unit-tag">天気記号・湿度</span>
+        <span class="unit-tag">露点の計算</span>
+        <span class="unit-tag">雲のでき方</span>
+        <span class="unit-tag">前線と気団</span>
+      </div>
+      <div class="card-footer-link">目次を見る <span>→</span></div>
+    </a>
+
     <!-- 理科：力・仕事・エネルギー（中3） -->
     <a class="subject-card s4" href="https://realizefield.github.io/j-science3-chikara/" target="_blank">
       <div class="card-top">
@@ -711,7 +728,7 @@
           <span class="tpdf-subj-tag">🔬 理科</span>
           <span class="tpdf-subj-tag">🌏 社会</span>
         </div>
-        <div class="tpdf-pdf-counts">国文法4件 ／ 英語2件 ／ 数学7件 ／ 理科3件 ／ 社会17件</div>
+        <div class="tpdf-pdf-counts">国文法4件 ／ 英語2件 ／ 数学3件 ／ 理科3件 ／ 社会17件</div>
       </div>
       <div class="tpdf-grade-card tg3">
         <div class="tpdf-grade-label">中学３年</div>
@@ -756,6 +773,34 @@
   </div>
 
 
+  <!-- ===== 算数パネル ===== -->
+  <div class="section-title">算数（小学校の計算をやり直したい人へ）</div>
+  <div class="tpdf-panel-wrap">
+    <div class="tpdf-panel-head">
+      <div class="tpdf-panel-icon">🔢</div>
+      <div>
+        <div class="tpdf-panel-title">江原予備校　小学校算数プログラム</div>
+        <div class="tpdf-panel-sub">5と10のまとまり ／ 九九と筆算 ／ 単元テスト（4択）</div>
+      </div>
+    </div>
+    <div class="sansu-links">
+      <a class="sansu-link" href="https://realizefield.github.io/sansu/matomari.html" target="_blank" rel="noopener"><b>🧩 5と10のまとまり練習</b><span>たし算・ひき算の土台。くり上がり・くり下がり、ひっ算まで。</span></a>
+      <a class="sansu-link" href="https://realizefield.github.io/sansu/kuku.html" target="_blank" rel="noopener"><b>✖️ 九九と筆算の道場</b><span>九九から、かけ算・わり算のひっ算まで。</span></a>
+      <a class="sansu-link" href="https://realizefield.github.io/sansu/matomari-test.html" target="_blank" rel="noopener"><b>📝 5と10のまとまり　単元テスト</b><span>各単元3回（基本・標準・応用）の4択テスト。</span></a>
+      <a class="sansu-link" href="https://realizefield.github.io/sansu/kuku-test.html" target="_blank" rel="noopener"><b>📝 九九と筆算　単元テスト</b><span>各単元3回（基本・標準・応用）の4択テスト。</span></a>
+    </div>
+    <div class="tpdf-footer">
+      <div class="tpdf-footer-note">
+        つまずいたところに戻って、少しずつ進められます。<br>
+        スマホ・タブレット・PCすべてに対応しています。
+      </div>
+      <a class="tpdf-open-btn" href="https://realizefield.github.io/sansu/sansu-index.html" target="_blank" rel="noopener">
+        🔢 算数プログラムを開く →
+      </a>
+    </div>
+  </div>
+
+
 </div>
 
 <!-- ===== 下部ボタン ===== -->
@@ -792,9 +837,6 @@
 
   var PASSWORD = 'gamba2026';
 
-  // 講師用の合言葉（生徒ID・パスワードの代わりに、これを入れると開きます）
-  var TEACHER_WORD = 'kogen';
-
   // ============================================================
   // 【一時公開モード】しばらく誰でも入れるようにする場合は false のまま。
   // ログイン制に戻すときは true にしてください。
@@ -821,9 +863,6 @@
     document.getElementById('id-input').addEventListener('keydown', function(e) {
       if (e.key === 'Enter') document.getElementById('pw-input').focus();
     });
-    document.getElementById('teacher-input').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') checkTeacher();
-    });
   })();
 
   function showWelcome(name) {
@@ -832,36 +871,6 @@
     var nameEl = document.getElementById('welcome-name');
     nameEl.textContent = name;
     bar.style.display = 'block';
-  }
-
-  function toggleTeacher() {
-    var box = document.getElementById('teacher-box');
-    var show = box.style.display === 'none';
-    box.style.display = show ? 'block' : 'none';
-    if (show) document.getElementById('teacher-input').focus();
-  }
-
-  function checkTeacher() {
-    var input = document.getElementById('teacher-input');
-    var error = document.getElementById('teacher-error');
-    var overlay = document.getElementById('pw-overlay');
-    if (input.value.trim().toLowerCase() === TEACHER_WORD) {
-      try {
-        localStorage.setItem('gamba_auth', 'ok');
-        localStorage.setItem('gamba_name', '先生');
-      } catch (e) {}
-      showWelcome('先生');
-      overlay.style.transition = 'opacity 0.4s ease';
-      overlay.style.opacity = '0';
-      setTimeout(function() { overlay.style.display = 'none'; }, 400);
-    } else {
-      input.classList.remove('error');
-      void input.offsetWidth;
-      input.classList.add('error');
-      error.style.display = 'block';
-      input.value = '';
-      input.focus();
-    }
   }
 
   function checkPassword() {

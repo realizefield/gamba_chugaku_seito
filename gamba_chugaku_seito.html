@@ -104,6 +104,10 @@
   .s1 .card-emoji { background: #e8f4fd; }
   .s1 .card-category { background: #1a6b9a; color: white; }
   .s1 .unit-tag { background: #e8f4fd; color: #1a6b9a; }
+  .card-multi:hover { transform: none; }
+  .card-footer-split { display: flex; gap: 2px; }
+  .card-footer-split .card-footer-link { flex: 1; text-decoration: none; transition: filter 0.2s; }
+  .card-footer-split .card-footer-link:hover { filter: brightness(0.94); }
   .s1 .card-footer-link { background: #e8f4fd; color: #1a6b9a; }
 
   /* 数学：オレンジ */
@@ -615,45 +619,32 @@
       <div class="card-footer-link">単元表を見る <span>→</span></div>
     </a>
 
-    <!-- 理科：光と音（中1） -->
-    <a class="subject-card s4" href="https://realizefield.github.io/j-science-hikari/" target="_blank">
+    <!-- 理科：光と音（中1）光3講＋音4章を1枚に統合 -->
+    <div class="subject-card s4 card-multi">
       <div class="card-top">
         <div class="card-emoji">💡</div>
         <div class="card-info">
           <div class="card-category">理科</div>
-          <div class="card-name">光と音<br><span style="font-size:0.75rem;font-weight:400">光の反射・屈折・全反射・凸レンズ 全3講</span></div>
+          <div class="card-name">光と音<br><span style="font-size:0.75rem;font-weight:400">光の反射・屈折・凸レンズ／音の伝わり方・共鳴・振動数 全7講</span></div>
           <div class="card-level">⭐ 中1対応　NEW</div>
         </div>
       </div>
-      <div class="card-desc">光の反射と屈折、全反射、凸レンズによる像までを、動かして確かめられる図でわかりやすく解説。作図は「ヒント」を押すと1つずつ補助線が出て、自分で作図する練習もできます。合っていれば花吹雪で大正解！　語群から選ぶ問題と4択問題、確認問題で確実に定着できます。</div>
+      <div class="card-desc">【光】反射・屈折・全反射・凸レンズによる像までを、動かして確かめられる図で解説。作図は「ヒント」を押すと補助線が1つずつ出て、自分で作図する練習もできます。合っていれば花吹雪で大正解！<br>【音】音の伝わり方、共鳴、弦の長さ・太さ・張力と音の高さ、オシロスコープの波、音の速さの計算まで、スライダーで動かして確かめられます。<br>どちらも語群から選ぶ問題と4択問題で確実に定着できます。</div>
       <div class="card-units">
         <span class="unit-tag">光の反射・像の作図</span>
         <span class="unit-tag">屈折（空気は大きい）</span>
         <span class="unit-tag">全反射</span>
         <span class="unit-tag">凸レンズ</span>
+        <span class="unit-tag">音の伝わり方</span>
+        <span class="unit-tag">共鳴</span>
+        <span class="unit-tag">弦の音</span>
+        <span class="unit-tag">振動数と音の速さ</span>
       </div>
-      <div class="card-footer-link">目次を見る <span>→</span></div>
-    </a>
-
-    <!-- 理科：音の性質（中1） -->
-    <a class="subject-card s4" href="https://realizefield.github.io/j-science-oto/oto1.html" target="_blank">
-      <div class="card-top">
-        <div class="card-emoji">🔊</div>
-        <div class="card-info">
-          <div class="card-category">理科</div>
-          <div class="card-name">音の性質<br><span style="font-size:0.75rem;font-weight:400">音の伝わり方・共鳴・弦の音・振動数と音の速さ 全4章</span></div>
-          <div class="card-level">⭐ 中1対応　NEW</div>
-        </div>
+      <div class="card-footer-split">
+        <a class="card-footer-link" href="https://realizefield.github.io/j-science-hikari/" target="_blank">💡 光（全3講） <span>→</span></a>
+        <a class="card-footer-link" href="https://realizefield.github.io/j-science-oto/oto1.html" target="_blank">🔊 音（全4章） <span>→</span></a>
       </div>
-      <div class="card-desc">音が空気を伝わるしくみから、音さの共鳴、弦の長さ・太さ・張力と音の高さ、オシロスコープの波、音の速さの計算まで、図とともにわかりやすく解説。スライダーで動かして確かめられるほか、語群から選ぶ問題と4択問題で確実に定着できます。</div>
-      <div class="card-units">
-        <span class="unit-tag">①音の伝わり方</span>
-        <span class="unit-tag">②共鳴</span>
-        <span class="unit-tag">③弦の音</span>
-        <span class="unit-tag">④振動数と音の速さ</span>
-      </div>
-      <div class="card-footer-link">学習する <span>→</span></div>
-    </a>
+    </div>
 
     <!-- 理科：人体のはたらき（中2） -->
     <a class="subject-card s4" href="https://realizefield.github.io/j-science2-jintai/" target="_blank">

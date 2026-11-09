@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>マス計算ステップ練習｜江原予備校</title>
+<style>
+:root{--bg:#f6f3ec;--card:#fff;--ink:#2b2b2b;--sub:#6b6558;--main:#2f7d6d;--main-d:#235f53;--soft:#e3f1ed;--warn:#e8913a;--ok:#2f9d6a;--line:#ddd6c6;--head:#f1e7cf;color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Maru Gothic ProN","BIZ UDPGothic","Yu Gothic",Meiryo,sans-serif;line-height:1.6}
+.app{max-width:720px;margin:0 auto;padding:16px 14px 60px}
+header{text-align:center;padding:10px 0 4px}
+h1{font-size:1.5rem;margin:0;color:var(--main-d)}
+.lead{margin:2px 0 14px;color:var(--sub);font-size:.95rem}
+h2{font-size:1rem;margin:16px 0 6px;color:var(--main-d)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:14px}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg button{flex:1 1 90px;min-height:48px;font:inherit;font-size:1.05rem;border:2px solid var(--line);background:#fff;border-radius:12px;cursor:pointer;color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--main);border-color:var(--main);color:#fff;font-weight:bold}
+.desc{font-size:.88rem;color:var(--sub);margin:6px 0 0;min-height:1.4em}
+.chk{display:flex;gap:8px;align-items:center;margin-top:14px;font-size:1rem;cursor:pointer}
+.chk input{width:22px;height:22px}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.step{font:inherit;text-align:left;background:#fff;border:2px solid var(--line);border-radius:16px;padding:12px 14px;cursor:pointer;color:var(--ink)}
+.step:hover,.step:focus-visible{border-color:var(--main);background:var(--soft)}
+.step .no{font-size:.85rem;color:var(--sub)}
+.step .big{font-size:1.8rem;font-weight:bold;color:var(--main-d);line-height:1.2}
+.step .n{font-size:.9rem}
+.step .rec{font-size:.85rem;margin-top:4px;color:var(--sub)}
+.step.done .rec{color:var(--ok);font-weight:bold}
+.note{font-size:.9rem;color:var(--sub)}
+details.card summary{cursor:pointer;font-weight:bold;color:var(--main-d)}
+details.card ul{margin:8px 0 0;padding-left:1.2em;font-size:.93rem}
+details.card li{margin-bottom:6px}
+/* play */
+.bar-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.ptitle{font-size:1.15rem;font-weight:bold;color:var(--main-d)}
+.psub{font-size:.85rem;color:var(--sub)}
+.timer{font-size:1.3rem;font-weight:bold;font-variant-numeric:tabular-nums;color:var(--sub)}
+.prog{height:12px;background:#e7e1d2;border-radius:99px;overflow:hidden;margin:10px 0 4px}
+.prog>div{height:100%;width:0;background:var(--main);transition:width .25s}
+.ptxt{font-size:.85rem;color:var(--sub);text-align:right}
+#say{min-height:2em;font-weight:bold;color:var(--main);text-align:center;margin:6px 0}
+#say.warn{color:var(--warn)}
+.dan{display:flex;flex-wrap:wrap;gap:8px}
+.dan button{width:52px;height:52px;font:inherit;font-size:1.2rem;border:2px solid var(--line);background:#fff;border-radius:12px;cursor:pointer;color:var(--ink)}
+.dan button[aria-pressed="true"]{background:var(--warn);border-color:var(--warn);color:#fff;font-weight:bold}
+.dan .clr{width:auto;padding:0 14px;font-size:.95rem;color:var(--sub)}
+.grid{display:grid;--cs:min(72px,calc((100vw - 48px - var(--c)*6px)/(var(--c) + 1)));grid-template-columns:repeat(calc(var(--c) + 1),var(--cs));gap:6px;justify-content:center;margin:8px 0 14px}
+.cell{width:var(--cs);height:var(--cs);display:flex;align-items:center;justify-content:center;border-radius:10px;font-size:calc(var(--cs)*.42);font-weight:bold}
+.corner{background:var(--main);color:#fff}
+.head{background:var(--head);transition:background .15s}
+.given{background:#ebe8e0;color:#444}
+.hl{background:#cfe8e1!important;box-shadow:0 0 0 3px var(--main) inset}
+input.cell{border:2px solid var(--line);background:#fff;text-align:center;font-family:inherit;padding:0;color:var(--ink);-moz-appearance:textfield}
+input.cell::-webkit-outer-spin-button,input.cell::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+input.cell:focus{outline:3px solid var(--main);outline-offset:0;border-color:var(--main)}
+input.cell.hin{border-style:dashed;border-color:var(--warn);background:#fff8ec}
+input.cell.ok{background:#e5f5ec;border-color:var(--ok);color:#1c6b48}
+input.cell.hint{background:#fdf3c8;border-color:#d9b84a;color:#7a5f00}
+input.cell.bad{background:#fff1e0;border-color:var(--warn);animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.row-btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.btn{font:inherit;min-height:46px;padding:0 18px;border-radius:12px;border:2px solid var(--main);background:#fff;color:var(--main-d);cursor:pointer;font-size:1rem}
+.btn.primary{background:var(--main);color:#fff}
+.overlay{position:fixed;inset:0;background:rgba(40,40,30,.45);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}
+.overlay[hidden],[hidden]{display:none!important}
+.dlg{background:#fff;border-radius:20px;padding:22px 20px;max-width:420px;width:100%;text-align:center}
+.dlg h2{font-size:1.5rem;margin:0 0 6px}
+.dlg .star{font-size:2.4rem;color:#e0a82e;line-height:1}
+.dlg p{margin:6px 0}
+.dlg .row-btns{margin-top:14px}
+#confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:11}
+#confetti span{position:absolute;top:-20px;width:10px;height:14px;border-radius:2px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+@media (prefers-reduced-motion:reduce){#confetti{display:none}input.cell.bad{animation:none}}
+footer{text-align:center;color:var(--sub);font-size:.8rem;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <h1>マス計算 ステップ練習</h1>
+  <p class="lead">ちいさく はじめて「できた！」を ふやそう</p>
+</header>
+
+<section id="home">
+  <p style="margin:0 0 10px"><a href="gamba_chugaku_seito.html" style="color:var(--main-d);font-weight:bold">← GAMBA 中学生用ページに もどる</a></p>
+  <div class="card">
+    <h2 style="margin-top:0">① けいさんを えらぶ</h2>
+    <div class="seg" id="segOp"></div>
+    <div id="danBox" hidden>
+      <h2>★ にがてな 段を えらぶ（かけ算のとき）</h2>
+      <div class="dan" id="dan"></div>
+      <p class="desc" id="danDesc"></p>
+    </div>
+    <h2>② むずかしさ</h2>
+    <div class="seg" id="segLv"></div>
+    <p class="desc" id="lvDesc"></p>
+    <h2>③ ならびかた</h2>
+    <div class="seg" id="segOrd"></div>
+    <label class="chk"><input type="checkbox" id="chkTimer"> タイムを はかる（じぶんの ベストに ちょうせん）</label>
+  </div>
+
+  <h2 style="margin-top:4px">④ ステップを えらぶ</h2>
+  <div class="steps" id="steps"></div>
+  <p class="note" style="margin-top:10px">むしくいは、見えている答えを ヒントにして、□に入る数をさがします。</p>
+
+  <details class="card">
+    <summary>先生・保護者の方へ（進め方のめやす）</summary>
+    <ul>
+      <li>1回の練習は <b>1〜3分</b>、1日1〜2枚まで。短く終えて「できた」で締めくくります。</li>
+      <li>4×4（16マス）→5×5（25マス）→6×6（36マス）の順で。6×6までで十分で、100マスは使いません。</li>
+      <li>むしくいは、ふつうのマスがスムーズに解けるようになってから。足し算とひき算の関係に気づく練習になります。</li>
+      <li>入力すると、その場で○×がわかります。まちがえても責めず、「もう一度」で直せます。つまずいたら「ヒント」を使えます。</li>
+      <li>タイムは「前回の自分」とだけ比べます。ベストは、このブラウザに保存されます。</li>
+    </ul>
+  </details>
+</section>
+
+<section id="play" hidden>
+  <div class="card">
+    <div class="bar-top">
+      <div><div class="ptitle" id="ptitle"></div><div class="psub" id="psub"></div></div>
+      <div class="timer" id="timer" hidden>0.0秒</div>
+    </div>
+    <div class="prog"><div id="progBar"></div></div>
+    <div class="ptxt" id="ptxt"></div>
+    <div id="say" aria-live="polite">すきな マスから どうぞ</div>
+    <div class="grid" id="grid"></div>
+    <div class="row-btns">
+      <button class="btn" id="btnHint">ヒント</button>
+      <button class="btn" id="btnNew">あたらしい もんだい</button>
+      <button class="btn" id="btnHome">もどる</button>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="overlay" id="done" hidden>
+  <div class="dlg">
+    <div class="star">★</div>
+    <h2>ぜんぶ できたね！</h2>
+    <p id="doneMsg"></p>
+    <p id="doneStat" class="note"></p>
+    <div class="row-btns">
+      <button class="btn primary" id="btnAgain">もういちど</button>
+      <button class="btn" id="btnNext">つぎのステップへ</button>
+      <button class="btn" id="btnHome2">もどる</button>
+    </div>
+  </div>
+</div>
+<div id="confetti"></div>
+<footer>江原予備校</footer>
+
+<script>
+/*GEN-START*/
+const OPS={add:{label:'たし算',sym:'＋',f:(a,b)=>a+b,inv:(ans,other)=>ans-other},
+           sub:{label:'ひき算',sym:'－',f:(a,b)=>a-b,inv:(ans,other)=>ans+other},
+           mul:{label:'かけ算',sym:'×',f:(a,b)=>a*b,inv:(ans,other)=>ans/other}};
+const LEVELS={
+  add:{1:{r:[0,5],c:[0,5]},2:{r:[1,9],c:[1,9]},3:{r:[10,19],c:[1,9]}},
+  sub:{1:{r:[5,10],c:[0,5]},2:{r:[10,19],c:[1,9]},3:{r:[20,29],c:[1,9]}},
+  mul:{1:{r:[1,6],c:[1,6]},2:{r:[1,9],c:[1,9]},3:{r:[11,19],c:[2,9]}}
+};
+const STEPS=[{n:4,mushi:false},{n:5,mushi:false},{n:6,mushi:false},{n:4,mushi:true},{n:6,mushi:true}];
+function range(a,b){const r=[];for(let i=a;i<=b;i++)r.push(i);return r}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function pickHeaders(vals,n,ordered){const p=shuffle(vals).slice(0,n);if(ordered)p.sort((x,y)=>x-y);return p}
+/* 段をえらんだとき：C=えらんだ段の数(最大n)、R=相手の数の行数(最大9)。えらばないときは n×n */
+function dims(stepIdx,danCount){
+  const n=STEPS[stepIdx].n;
+  if(!danCount)return {R:n,C:n};
+  const C=Math.min(danCount,n);
+  const R=C>=n?n:Math.min(9,Math.ceil(n*n/C));
+  return {R,C};
+}
+function generate(opKey,lv,stepIdx,ordered,dan){
+  const st=STEPS[stepIdx],L=LEVELS[opKey][lv],op=OPS[opKey];
+  const useDan=opKey==='mul'&&Array.isArray(dan)&&dan.length>0;
+  const {R,C}=dims(stepIdx,useDan?dan.length:0);
+  let rows,cols;
+  if(useDan){
+    cols=pickHeaders(dan,C,ordered);
+    rows=pickHeaders(lv===3?range(11,19):range(1,9),R,ordered);
+  }else{
+    rows=pickHeaders(range(L.r[0],L.r[1]),R,ordered);
+    cols=pickHeaders(range(L.c[0],L.c[1]),C,ordered);
+  }
+  const ans=rows.map(r=>cols.map(c=>op.f(r,c)));
+  const shown=Array.from({length:R},()=>Array(C).fill(false));
+  let hideRow=-1,hideCol=-1;
+  if(st.mushi){
+    hideRow=Math.floor(Math.random()*R);
+    hideCol=(C>=3&&R>=3)?Math.floor(Math.random()*C):-1;
+    const colsOk=range(0,C-1).filter(j=>j!==hideCol),rowsOk=range(0,R-1).filter(i=>i!==hideRow);
+    shuffle(colsOk).slice(0,C>=3?2:1).forEach(j=>{shown[hideRow][j]=true});
+    if(hideCol>=0)shuffle(rowsOk).slice(0,2).forEach(i=>{shown[i][hideCol]=true});
+    for(let i=0;i<R;i++)for(let j=0;j<C;j++){
+      if(i===hideRow&&j===hideCol)continue;
+      if(!shown[i][j]&&Math.random()<0.25)shown[i][j]=true;
+    }
+  }
+  return {R,C,opKey,lv,stepIdx,mushi:st.mushi,rows,cols,ans,shown,hideRow,hideCol,
+          dan:useDan?dan.slice():null,danCount:useDan?dan.length:0};
+}
+/*GEN-END*/
+
+const LV_NAME={1:'かんたん',2:'ふつう',3:'ちょうせん'};
+const LV_DESC={
+  add:{1:'0〜5 のたし算',2:'1〜9 のたし算（くり上がりあり）',3:'10〜19 ＋ 1けた'},
+  sub:{1:'10までのひき算',2:'10〜19 － 1けた（くり下がりあり）',3:'20〜29 － 1けた'},
+  mul:{1:'1〜6 のかけ算',2:'九九（1〜9）',3:'11〜19 × 2〜9'}
+};
+const $=id=>document.getElementById(id);
+const mem={};
+const store={
+  get(k){try{const v=localStorage.getItem(k);return v?JSON.parse(v):(mem[k]||null)}catch(e){return mem[k]||null}},
+  set(k,v){mem[k]=v;try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+let cfg=Object.assign({op:'add',lv:1,ordered:true,timer:false,dan:[]},store.get('masuCfg')||{});
+if(!OPS[cfg.op])cfg.op='add';
+if(!Array.isArray(cfg.dan))cfg.dan=[];
+const curDan=()=>cfg.op==='mul'&&cfg.dan.length?cfg.dan.slice().sort((a,b)=>a-b):null;
+const progKey=(op,lv,i,dan)=>`${op}-${lv}-${i}`+(op==='mul'&&dan&&dan.length?'-d'+dan.join(''):'');
+let prog=store.get('masuProg')||{};
+const saveCfg=()=>store.set('masuCfg',cfg);
+const fmt=ms=>{const s=ms/1000;return s<60?s.toFixed(1)+'秒':Math.floor(s/60)+'分'+Math.round(s%60)+'秒'};
+
+function seg(id,items,cur,pick){
+  const box=$(id);box.innerHTML='';
+  items.forEach(([v,label])=>{
+    const b=document.createElement('button');b.type='button';b.textContent=label;
+    b.setAttribute('aria-pressed',v===cur?'true':'false');
+    b.onclick=()=>pick(v);box.appendChild(b);
+  });
+}
+function stepName(i,dc){const s=STEPS[i],{R,C}=dims(i,dc||0);return `ステップ${i+1}　${R}×${C}${s.mushi?'（むしくい）':''}`}
+function lvDescText(op,lv,dan){
+  if(op==='mul'&&dan)return `えらんだ段 × ${lv===3?'11〜19':'1〜9'}`;
+  return LV_DESC[op][lv];
+}
+function renderHome(){
+  seg('segOp',Object.keys(OPS).map(k=>[k,OPS[k].label]),cfg.op,v=>{cfg.op=v;saveCfg();renderHome()});
+  seg('segLv',[1,2,3].map(k=>[k,LV_NAME[k]]),cfg.lv,v=>{cfg.lv=v;saveCfg();renderHome()});
+  const dan=curDan();
+  $('lvDesc').textContent=lvDescText(cfg.op,cfg.lv,dan);
+  $('danBox').hidden=cfg.op!=='mul';
+  if(cfg.op==='mul'){
+    const box=$('dan');box.innerHTML='';
+    for(let d=1;d<=9;d++){
+      const b=document.createElement('button');b.type='button';b.textContent=d;
+      b.setAttribute('aria-label',d+'のだん');b.setAttribute('aria-pressed',cfg.dan.includes(d)?'true':'false');
+      b.onclick=()=>{cfg.dan=cfg.dan.includes(d)?cfg.dan.filter(x=>x!==d):cfg.dan.concat(d);saveCfg();renderHome()};
+      box.appendChild(b);
+    }
+    const c=document.createElement('button');c.type='button';c.className='clr';c.textContent='ぜんぶ はずす';
+    c.onclick=()=>{cfg.dan=[];saveCfg();renderHome()};box.appendChild(c);
+    $('danDesc').textContent=dan?`${dan.join('・')}の段だけの れんしゅうに なります。`:'えらばないときは、ぜんぶの段が まざります。';
+  }
+  seg('segOrd',[[true,'じゅんばん'],[false,'バラバラ']],cfg.ordered,v=>{cfg.ordered=v;saveCfg();renderHome()});
+  $('chkTimer').checked=cfg.timer;
+  const box=$('steps');box.innerHTML='';
+  STEPS.forEach((s,i)=>{
+    const p=prog[progKey(cfg.op,cfg.lv,i,dan)];
+    const {R,C}=dims(i,dan?dan.length:0);
+    const b=document.createElement('button');b.type='button';b.className='step'+(p&&p.clears?' done':'');
+    b.innerHTML=`<div class="no">ステップ${i+1}</div><div class="big">${R}×${C}</div><div class="n">${s.mushi?'むしくい（□をさがす）':(R*C)+' マス'}${dan?'（'+dan.join('・')+'の段）':''}</div><div class="rec">${p&&p.clears?'★ '+p.clears+'回クリア'+(p.best?'　ベスト '+fmt(p.best):''):'まだ'}</div>`;
+    b.onclick=()=>startGame(i);box.appendChild(b);
+  });
+}
+$('chkTimer').onchange=e=>{cfg.timer=e.target.checked;saveCfg()};
+
+/* ---- play ---- */
+let game=null,inputs=[],rowEls=[],colEls=[],total=0,solved=0,misses=0,hints=0,t0=0,tick=null,okCount=0;
+const PRAISE=['いいね！','その調子！','ナイス！','すごい！','じょうず！'];
+function say(t,warn){const s=$('say');s.textContent=t;s.classList.toggle('warn',!!warn)}
+function startGame(i){
+  game=generate(cfg.op,cfg.lv,i,cfg.ordered,curDan());
+  $('home').hidden=true;$('play').hidden=false;$('done').hidden=true;
+  buildGrid(game);window.scrollTo(0,0);
+}
+function buildGrid(g){
+  const grid=$('grid');grid.style.setProperty('--c',g.C);grid.innerHTML='';
+  inputs=[];rowEls=[];colEls=[];solved=0;misses=0;hints=0;okCount=0;t0=0;clearInterval(tick);
+  const sym=OPS[g.opKey].sym;
+  $('ptitle').textContent=`${stepName(g.stepIdx,g.danCount)}　${OPS[g.opKey].label}`+(g.dan?`（${g.dan.join('・')}の段）`:'');
+  $('psub').textContent=`${LV_NAME[g.lv]}：${lvDescText(g.opKey,g.lv,g.dan)}`+(g.mushi?'　□は、見えている答えからさがそう':'');
+  const tm=$('timer');tm.hidden=!cfg.timer;tm.textContent='0.0秒';
+  const corner=document.createElement('div');corner.className='cell corner';corner.textContent=sym;grid.appendChild(corner);
+
+  const mk=(val,kind,r,c,label)=>{
+    const inp=document.createElement('input');inp.type='text';inp.inputMode='numeric';inp.autocomplete='off';
+    inp.className='cell'+(kind==='cell'?'':' hin');inp.maxLength=3;inp.setAttribute('aria-label',label);
+    inp.dataset.ans=val;inp.dataset.kind=kind;inp.dataset.r=r;inp.dataset.c=c;
+    inp.addEventListener('input',e=>{if(!e.isComposing)onInput(inp)});
+    inp.addEventListener('compositionend',()=>onInput(inp));
+    inp.addEventListener('focus',()=>setHl(inp));
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();focusNext(inp)}});
+    inputs.push(inp);return inp;
+  };
+  g.cols.forEach((c,j)=>{
+    let el;
+    if(j===g.hideCol)el=mk(c,'colh',-1,j,'□ のところの数');
+    else{el=document.createElement('div');el.className='cell head';el.textContent=c}
+    colEls[j]=el;grid.appendChild(el);
+  });
+  g.rows.forEach((r,i)=>{
+    let el;
+    if(i===g.hideRow)el=mk(r,'rowh',i,-1,'□ のところの数');
+    else{el=document.createElement('div');el.className='cell head';el.textContent=r}
+    rowEls[i]=el;grid.appendChild(el);
+    g.cols.forEach((c,j)=>{
+      if(g.shown[i][j]){const d=document.createElement('div');d.className='cell given';d.textContent=g.ans[i][j];grid.appendChild(d)}
+      else grid.appendChild(mk(g.ans[i][j],'cell',i,j,`${r} ${sym} ${c}`));
+    });
+  });
+  total=inputs.length;updateProg();say('すきな マスから どうぞ');
+  if(inputs[0])inputs[0].focus({preventScroll:true});
+}
+function setHl(inp){
+  document.querySelectorAll('.hl').forEach(e=>e.classList.remove('hl'));
+  const k=inp.dataset.kind,r=+inp.dataset.r,c=+inp.dataset.c;
+  if(k==='cell'){rowEls[r].classList.add('hl');colEls[c].classList.add('hl')}
+  else if(k==='rowh')rowEls[r].classList.add('hl');
+  else colEls[c].classList.add('hl');
+}
+function startTimer(){
+  if(t0)return;t0=Date.now();
+  if(cfg.timer)tick=setInterval(()=>{$('timer').textContent=fmt(Date.now()-t0)},200);
+}
+function onInput(inp){
+  if(inp.readOnly)return;
+  startTimer();
+  const v=inp.value.replace(/[０-９]/g,ch=>String.fromCharCode(ch.charCodeAt(0)-0xFEE0)).replace(/\D/g,'');
+  inp.value=v;inp.classList.remove('bad');
+  const a=inp.dataset.ans;
+  if(v.length>=a.length){
+    if(parseInt(v,10)===parseInt(a,10)){inp.value=a;lock(inp,'ok');okCount++;
+      if(solved<total){
+        const half=Math.ceil(total/2);
+        if(solved===half)say('半分 きたよ！');
+        else if(okCount%5===0)say(PRAISE[Math.floor(Math.random()*PRAISE.length)]);
+      }
+      afterSolve(inp);
+    }else{
+      misses++;inp.classList.add('bad');say('おしい！ もういちど',true);
+      setTimeout(()=>inp.select(),0);
+    }
+  }
+}
+function lock(inp,cls){inp.readOnly=true;inp.classList.remove('bad');inp.classList.add(cls);solved++;updateProg()}
+function afterSolve(inp){
+  if(solved>=total){finish();return}
+  focusNext(inp);
+}
+function focusNext(from){
+  const idx=inputs.indexOf(from);
+  for(let k=1;k<=inputs.length;k++){
+    const n=inputs[(idx+k)%inputs.length];
+    if(!n.readOnly){n.focus();return}
+  }
+}
+function updateProg(){
+  $('progBar').style.width=(total?solved/total*100:0)+'%';
+  $('ptxt').textContent=`${solved} / ${total} マス`;
+}
+$('btnHint').onclick=()=>{
+  if(!game)return;
+  let t=document.activeElement;
+  if(!(inputs.includes(t))||t.readOnly)t=inputs.find(i=>!i.readOnly);
+  if(!t)return;
+  startTimer();t.value=t.dataset.ans;hints++;lock(t,'hint');say('ヒントを つかったよ。つぎも がんばろう');
+  afterSolve(t);
+};
+$('btnNew').onclick=()=>{if(game)startGame(game.stepIdx)};
+function goHome(){clearInterval(tick);game=null;$('done').hidden=true;$('play').hidden=true;$('home').hidden=false;renderHome();window.scrollTo(0,0)}
+$('btnHome').onclick=goHome;$('btnHome2').onclick=goHome;
+$('btnAgain').onclick=()=>startGame(game.stepIdx);
+$('btnNext').onclick=()=>startGame(Math.min(game.stepIdx+1,STEPS.length-1));
+
+function finish(){
+  clearInterval(tick);
+  const ms=Date.now()-t0,g=game,key=progKey(g.opKey,g.lv,g.stepIdx,g.dan);
+  const p=prog[key]||{clears:0,best:null};p.clears++;
+  let newBest=false;
+  if(cfg.timer&&hints===0&&(!p.best||ms<p.best)){newBest=!!p.best;p.best=ms}
+  prog[key]=p;store.set('masuProg',prog);
+  let msg=misses===0&&hints===0?'ミスなし！ すばらしい！':misses<=3?'よくがんばりました！':'さいごまで やりきったね。もう一度やると もっとスムーズになるよ。';
+  $('doneMsg').textContent=msg;
+  const stat=[];
+  if(cfg.timer)stat.push('タイム '+fmt(ms)+(newBest?'（ベストこうしん！）':''));
+  stat.push('まちがい '+misses+'回');
+  if(hints)stat.push('ヒント '+hints+'回');
+  $('doneStat').textContent=stat.join('　');
+  $('btnNext').hidden=g.stepIdx>=STEPS.length-1;
+  $('done').hidden=false;confetti();
+}
+function confetti(){
+  const w=$('confetti');w.innerHTML='';
+  const cols=['#2f7d6d','#e8913a','#e0a82e','#d9617a','#5a8fd6'];
+  for(let i=0;i<30;i++){
+    const s=document.createElement('span');
+    s.style.left=Math.random()*100+'%';s.style.background=cols[i%cols.length];
+    s.style.animationDuration=(1.8+Math.random()*1.4)+'s';s.style.animationDelay=(Math.random()*.5)+'s';
+    w.appendChild(s);
+  }
+  setTimeout(()=>{w.innerHTML=''},4000);
+}
+renderHome();
+</script>
+</body>
+</html>
